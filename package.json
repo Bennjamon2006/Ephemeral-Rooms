@@ -1,0 +1,27 @@
+{
+  "name": "ephemeral-rooms",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A real-time chat application with ephemeral rooms, built with Next.js, Tailwind CSS, and Socket.IO.",
+  "author": "Benjamin Rivas <benjaminrivas500@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "npm run dev --workspace web",
+    "build": "npm run build --workspace web",
+    "start": "npm run start --workspace web",
+    "lint": "npm run lint --workspace web",
+    "commit": "cz"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
