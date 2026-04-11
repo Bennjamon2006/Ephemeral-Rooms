@@ -1,15 +1,20 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Card, Button } from "flowbite-react";
-import CodeInput from "./components/CodeInput";
+import { Card } from "flowbite-react";
+import CodeInput from "../app/components/CodeInput";
+import CustomButton from "./components/Button";
 
 export default function Home() {
+  const router = useRouter();
   const [roomCode, setRoomCode] = useState("");
   const disabled = roomCode.length !== 6;
 
   const enter = () => {
-    alert(`Intentando unirse a la sala: ${roomCode}`);
+    if (disabled) return;
+
+    router.push(`/room/${roomCode}/join`);
   };
 
   return (
@@ -53,27 +58,18 @@ export default function Home() {
           </h2>
           <div className="space-y-4">
             <CodeInput value={roomCode} onChange={setRoomCode} enter={enter} />
-            <Button
-              fullSized
-              onClick={enter}
-              disabled={disabled}
-              className="bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500"
-            >
+            <CustomButton onClick={enter} disabled={disabled}>
               Unirse
-            </Button>
+            </CustomButton>
           </div>
         </Card>
         <Card className="bg-gray-800/50 border-gray-700 w-full max-w-sm">
           <h2 className="text-2xl font-semibold text-white mb-4 text-center">
             O crea una nueva sala
           </h2>
-          <Button
-            fullSized
-            onClick={() => alert("Creando una nueva sala...")}
-            className="bg-green-600 hover:bg-green-700 focus:ring-green-500"
-          >
+          <CustomButton onClick={() => alert("Creando una nueva sala...")}>
             Crear Sala
-          </Button>
+          </CustomButton>
         </Card>
       </div>
 
