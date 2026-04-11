@@ -1,59 +1,16 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
-import { Card, TextInput, Button } from "flowbite-react";
+import { useState } from "react";
+import { Card, Button } from "flowbite-react";
+import CodeInput from "./components/CodeInput";
 
 export default function Home() {
   const [roomCode, setRoomCode] = useState("");
   const disabled = roomCode.length !== 6;
-  const inputRef = useRef<HTMLInputElement>(null);
-  const cursorRef = useRef<number>(0);
-
-  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let code = "";
-    const input = e.target.value;
-    let cursorPos = e.target.selectionStart || 0;
-
-    for (let i = 0; i < input.length; i++) {
-      const char = input[i].toUpperCase();
-      if (/[A-Z0-9]/.test(char)) {
-        code += char;
-      } else if (i < cursorPos) {
-        cursorPos--;
-      }
-    }
-
-    cursorRef.current = cursorPos;
-
-    if (code !== roomCode) {
-      // Nuevo código válido, actualizamos el estado
-      setRoomCode(code);
-    } else if (code !== input) {
-      // Se ingresó un carácter no válido, corregimos el input sin actualizar el estado
-      requestAnimationFrame(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(cursorPos, cursorPos);
-        }
-      });
-    }
-  };
 
   const enter = () => {
     alert(`Intentando unirse a la sala: ${roomCode}`);
   };
-
-  useLayoutEffect(() => {
-    if (inputRef.current) {
-      const selectionStart = inputRef.current.selectionStart || 0;
-
-      if (selectionStart !== cursorRef.current) {
-        inputRef.current.setSelectionRange(
-          cursorRef.current,
-          cursorRef.current,
-        );
-      }
-    }
-  }, [roomCode]);
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-4 py-4 bg-gradient-to-b from-gray-900 to-gray-800">
@@ -95,18 +52,7 @@ export default function Home() {
             Únete a una sala
           </h2>
           <div className="space-y-4">
-            <TextInput
-              ref={inputRef}
-              placeholder="Código de sala"
-              value={roomCode}
-              onChange={changeHandler}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !disabled) {
-                  enter();
-                }
-              }}
-              className="bg-gray-700/50 border-gray-600 text-white focus:ring-indigo-500 focus:border-indigo-500 tracking-widest font-mono"
-            />
+            <CodeInput value={roomCode} onChange={setRoomCode} enter={enter} />
             <Button
               fullSized
               onClick={enter}
