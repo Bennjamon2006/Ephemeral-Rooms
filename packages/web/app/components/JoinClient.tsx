@@ -5,6 +5,7 @@ import type { User } from "shared";
 import CustomButton from "./Button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import useName from "../hooks/useName";
 
 type Props = {
   roomCode: string;
@@ -13,12 +14,12 @@ type Props = {
 };
 
 export default function JoinClient({ roomCode, roomTimeout, users }: Props) {
-  const [username, setUsername] = useState("");
+  const { name, updateName } = useName();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<"success" | "error" | null>(null);
   const router = useRouter();
 
-  const disabled = loading || !username.trim() || result === "success";
+  const disabled = loading || !name.trim() || result === "success";
 
   const handleJoin = async () => {
     setLoading(true);
@@ -30,7 +31,7 @@ export default function JoinClient({ roomCode, roomTimeout, users }: Props) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username }),
+        body: JSON.stringify({ username: name }),
       });
 
       if (response.ok) {
@@ -59,10 +60,10 @@ export default function JoinClient({ roomCode, roomTimeout, users }: Props) {
           <input
             type="text"
             placeholder="Ingresa tu nombre"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={name}
+            onChange={(e) => updateName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && username.trim() && !disabled) {
+              if (e.key === "Enter" && name.trim() && !disabled) {
                 handleJoin();
               }
             }}
