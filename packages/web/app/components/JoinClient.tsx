@@ -3,9 +3,10 @@
 import { Card } from "flowbite-react";
 import type { User } from "shared";
 import CustomButton from "./Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useName from "../hooks/useName";
+import useWS from "../hooks/useWS";
 
 type Props = {
   roomCode: string;
@@ -14,10 +15,23 @@ type Props = {
 };
 
 export default function JoinClient({ roomCode, roomTimeout, users }: Props) {
+  const ws = useWS();
   const { name, updateName } = useName();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<"success" | "error" | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    ws.on("welcome", (message) => {
+      console.log("Received welcome message:", message);
+    });
+
+    ws.connect();
+
+    ws.on("echo", (message) => {
+      console.log("Received echo message:", message);
+    });
+  }, [ws]);
 
   const disabled = loading || !name.trim() || result === "success";
 
