@@ -13,6 +13,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "data": "file:../data",
     "flowbite-react": "^0.12.17",
     "next": "16.2.3",
     "react": "19.2.4",
