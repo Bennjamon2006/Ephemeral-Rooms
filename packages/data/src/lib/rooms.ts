@@ -1,10 +1,12 @@
 import type { Room, RoomState } from "shared";
-import { redisClient } from "../redisClient";
+import { useRedisClient } from "../redisClient";
 import generateCode from "../helpers/generateCode";
 
 export const getRoomData = async (
   roomCode: string,
 ): Promise<RoomState | null> => {
+  const redisClient = await useRedisClient();
+
   const roomData = await redisClient.get(`room:${roomCode}:meta`);
   if (!roomData) {
     return null;
@@ -13,6 +15,8 @@ export const getRoomData = async (
 };
 
 export const createRoom = async (): Promise<Room> => {
+  const redisClient = await useRedisClient();
+
   while (true) {
     const code = generateCode(6);
 
@@ -40,6 +44,7 @@ export const updateRoomData = async (
   roomCode: string,
   empty: boolean,
 ): Promise<void> => {
+  const redisClient = await useRedisClient();
   const ttl = empty ? 60 : 60 * 60; // 1 minute if empty, otherwise 1 hour
 
   await redisClient.set(

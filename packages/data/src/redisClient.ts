@@ -1,6 +1,6 @@
 import { createClient, RedisClientType } from "redis";
 
-export const redisClient: RedisClientType = createClient({
+const redisClient: RedisClientType = createClient({
   url: process.env.REDIS_URL,
 });
 
@@ -22,4 +22,12 @@ export const disconnectRedis = async () => {
   if (redisClient.isOpen) {
     await redisClient.quit();
   }
+};
+
+export const useRedisClient = async () => {
+  if (!redisClient.isOpen) {
+    await connectRedis();
+  }
+
+  return redisClient;
 };

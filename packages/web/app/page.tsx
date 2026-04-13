@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Card } from "flowbite-react";
 import CodeInput from "../app/components/CodeInput";
 import CustomButton from "./components/Button";
+import CreateRoomButton from "./components/CreateRoomButton";
 
 export default function Home() {
   const router = useRouter();
@@ -67,9 +68,7 @@ export default function Home() {
           <h2 className="text-2xl font-semibold text-white mb-4 text-center">
             O crea una nueva sala
           </h2>
-          <CustomButton onClick={() => alert("Creando una nueva sala...")}>
-            Crear Sala
-          </CustomButton>
+          <CreateRoomButton />
         </Card>
       </div>
 
