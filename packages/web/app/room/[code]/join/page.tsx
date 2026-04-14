@@ -1,19 +1,21 @@
 import CustomButton from "@/app/components/Button";
 import JoinClient from "@/app/components/JoinClient";
 import roomsService from "@/app/services/rooms.service";
-import { Button, Card } from "flowbite-react";
-import Link from "next/link";
+import { Card } from "flowbite-react";
+import { User } from "shared";
+
+type Params = {
+  code: string;
+};
 
 type Props = {
-  params: Promise<{
-    code: string;
-  }>;
+  params: Promise<Params>;
 };
 
 export default async function Room({ params }: Props) {
   const resolvedParams = await params;
 
-  const room = roomsService.getRoomByCode(resolvedParams.code);
+  const room = await roomsService.getRoomByCode(resolvedParams.code);
 
   if (!room) {
     return (
@@ -37,7 +39,9 @@ export default async function Room({ params }: Props) {
     );
   }
 
-  const users = await roomsService.getUsersInRoom(room.id);
+  const users = [] as User[];
 
-  return <JoinClient roomCode={resolvedParams.code} users={users} />;
+  return (
+    <JoinClient roomCode={resolvedParams.code} room={room} users={users} />
+  );
 }

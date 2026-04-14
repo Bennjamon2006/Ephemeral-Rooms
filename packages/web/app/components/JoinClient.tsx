@@ -1,39 +1,38 @@
 "use client";
 
 import { Card } from "flowbite-react";
-import type { User } from "shared";
+import type { User, RoomState } from "shared";
 import CustomButton from "./Button";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useName from "../hooks/useName";
-import useWS from "../hooks/useWS";
+import { useEffect, useState } from "react";
+import useTimeRemaing from "../hooks/useTimeRemaing";
 
 type Props = {
   roomCode: string;
+  room: RoomState;
   users: User[];
-  roomTimeout?: number;
 };
 
-export default function JoinClient({ roomCode, roomTimeout, users }: Props) {
-  const ws = useWS();
-  const { name, updateName } = useName();
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<"success" | "error" | null>(null);
+export default function JoinClient({ roomCode, room, users }: Props) {
   const router = useRouter();
 
-  useEffect(() => {
-    ws.on("welcome", (message) => {
-      console.log("Received welcome message:", message);
-    });
+  const { name, updateName } = useName();
+  const timeRemaining = useTimeRemaing(room.expiresAt);
 
-    ws.connect();
-
-    ws.on("echo", (message) => {
-      console.log("Received echo message:", message);
-    });
-  }, [ws]);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<"success" | "error" | null>(null);
 
   const disabled = loading || !name.trim() || result === "success";
+  const timeInSeconds = Math.floor(timeRemaining / 1000);
+
+  useEffect(() => {
+    if (timeRemaining === 0) {
+      setTimeout(() => {
+        router.push("/");
+      }, 3000);
+    }
+  }, [timeRemaining, router]);
 
   const handleJoin = async () => {
     setLoading(true);
@@ -110,11 +109,13 @@ export default function JoinClient({ roomCode, roomTimeout, users }: Props) {
 
         <div className="mt-2">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white text-center">
-            {users.length > 1
-              ? `${users[0].name} y ${users.length - 1} más están en esta sala`
-              : users.length === 1
-                ? `${users[0].name} está en esta sala`
-                : `No hay usuarios conectados, la sala se eliminará en ${roomTimeout ?? 0} segundos`}
+            {timeRemaining === 0
+              ? "La sala ha expirado. Volviendo al inicio..."
+              : users.length > 1
+                ? `${users[0].name} y ${users.length - 1} más están en esta sala`
+                : users.length === 1
+                  ? `${users[0].name} está en esta sala`
+                  : `No hay usuarios conectados, la sala se eliminará en ${timeInSeconds} segundos`}
           </h2>
         </div>
       </Card>
