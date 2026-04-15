@@ -45,11 +45,11 @@ export default function CreateRoomButton() {
           : status === "success"
             ? "Sala creada"
             : "Crear Sala"}
-
-        {status === "error" && (
-          <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
-        )}
       </CustomButton>
+
+      {status === "error" && (
+        <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+      )}
     </>
   );
 }

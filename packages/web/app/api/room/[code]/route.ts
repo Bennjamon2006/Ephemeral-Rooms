@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { rooms } from "data";
+import { rooms, users } from "data";
 
 type Params = {
   code: string;
@@ -34,11 +34,31 @@ export async function POST(req: NextRequest, { params }: Context) {
 
   const cookieStore = await cookies();
 
-  cookieStore.set(`room:${code}:username`, username, {
+  const existingUserId = cookieStore.get("userId")?.value;
+
+  if (existingUserId) {
+    const isUserInRoom = await users.checkUserInRoom(
+      code,
+      existingUserId,
+      username,
+    );
+
+    if (isUserInRoom) {
+      return NextResponse.json({ ok: true }, { status: 200 });
+    }
+  }
+
+  const result = await users.addUserToRoom(code, { name: username });
+
+  cookieStore.set("userId", result.id, {
     path: `/room/${code}`,
   });
 
-  return NextResponse.json({ ok: true }, { status: 200 });
+  cookieStore.set("username", username, {
+    path: `/room/${code}`,
+  }); // TEMPORAL, LUEGO SE DEBE OBTENER DEL BACKEND CON EL USER ID
+
+  return NextResponse.json({ ok: true }, { status: 201 });
 }
 
 export async function GET(req: NextRequest, { params }: Context) {

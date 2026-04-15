@@ -13,13 +13,19 @@ export default async function RoomPage({ params }: Props) {
   const { code } = await params;
 
   const cookieStore = await cookies();
-  const username = cookieStore.get(`room:${code}:username`)?.value;
+  const userId = cookieStore.get("userId")?.value;
+
+  if (!userId) {
+    redirect(`/room/${code}/join`);
+  }
+
+  const username = cookieStore.get("username")?.value;
 
   if (!username) {
     redirect(`/room/${code}/join`);
   }
 
-  const users = [username, "Alice", "Bob"];
+  const users = ["Alice", "Bob", username, "Charlie", "Dave"];
 
   const messages = [
     { user: username, text: "¡Hola a todos!" },

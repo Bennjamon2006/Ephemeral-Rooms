@@ -1,6 +1,7 @@
 import CustomButton from "@/app/components/Button";
 import JoinClient from "@/app/components/JoinClient";
 import roomsService from "@/app/services/rooms.service";
+import usersService from "@/app/services/users.service";
 import { Card } from "flowbite-react";
 import { User } from "shared";
 
@@ -39,7 +40,9 @@ export default async function Room({ params }: Props) {
     );
   }
 
-  const users = [] as User[];
+  const users: User[] = room.empty
+    ? []
+    : await usersService.getUsersInRoom(resolvedParams.code);
 
   return (
     <JoinClient roomCode={resolvedParams.code} room={room} users={users} />
