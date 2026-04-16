@@ -3,7 +3,7 @@ import JoinClient from "@/app/components/JoinClient";
 import roomsService from "@/app/services/rooms.service";
 import usersService from "@/app/services/users.service";
 import { Card } from "flowbite-react";
-import { User } from "shared";
+import { User } from "shared/models";
 
 type Params = {
   code: string;
@@ -40,6 +40,7 @@ export default async function Room({ params }: Props) {
     );
   }
 
+  console.log(room);
   const users: User[] = room.empty
     ? []
     : await usersService.getUsersInRoom(resolvedParams.code);

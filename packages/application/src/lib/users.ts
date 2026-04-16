@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import type { User } from "shared/models";
 import { usersRepository } from "infra/storage";
+import { rooms } from ".";
 
 export const getUsersInRoom = async (roomCode: string): Promise<User[]> => {
   return usersRepository.getRoomUsers(roomCode);
@@ -18,6 +19,8 @@ export const addUserToRoom = async (
   };
 
   await usersRepository.addUserToRoom(roomCode, user);
+
+  await rooms.updateRoom(roomCode, false);
 
   return user;
 };

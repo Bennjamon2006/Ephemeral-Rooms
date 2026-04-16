@@ -25,9 +25,9 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "dev": "tsc -w",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run clean && npm run build",
-    "prepare": "npm run build"
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

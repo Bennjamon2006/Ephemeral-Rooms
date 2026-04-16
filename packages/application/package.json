@@ -10,6 +10,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "dev": "tsc -w",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run clean && npm run build"
   },
