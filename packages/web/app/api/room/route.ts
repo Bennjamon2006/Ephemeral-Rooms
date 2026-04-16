@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { rooms } from "data";
+import { rooms } from "application";
 
 export async function POST() {
   try {

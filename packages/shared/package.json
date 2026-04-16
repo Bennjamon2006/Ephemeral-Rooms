@@ -2,15 +2,32 @@
   "name": "shared",
   "version": "0.0.0",
   "description": "Shared utilities and types for the Ephemeral Rooms project",
-  "main": "dist/index.js",
   "author": "Benjamin Rivas <benjaminrivas500@gmail.com>",
   "license": "MIT",
   "type": "commonjs",
+  "exports": {
+    "./events": {
+      "import": "./dist/events/index.js",
+      "require": "./dist/events/index.js",
+      "types": "./dist/events/index.d.ts"
+    },
+    "./models": {
+      "import": "./dist/models/index.js",
+      "require": "./dist/models/index.js",
+      "types": "./dist/models/index.d.ts"
+    },
+    "./repositories": {
+      "import": "./dist/repositories/index.js",
+      "require": "./dist/repositories/index.js",
+      "types": "./dist/repositories/index.d.ts"
+    }
+  },
   "private": true,
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run clean && npm run build"
+    "prepublishOnly": "npm run clean && npm run build",
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

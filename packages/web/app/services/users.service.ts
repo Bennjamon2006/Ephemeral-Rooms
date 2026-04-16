@@ -1,5 +1,5 @@
-import type { User } from "shared";
-import { users } from "data";
+import type { User } from "shared/models";
+import { users } from "application";
 
 const getUsersInRoom = async (roomCode: string): Promise<User[]> => {
   return users.getUsersInRoom(roomCode);

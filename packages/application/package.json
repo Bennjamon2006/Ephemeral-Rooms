@@ -1,7 +1,7 @@
 {
-  "name": "data",
+  "name": "application",
   "version": "0.0.0",
-  "description": "Data access layer for the Ephemeral Rooms project",
+  "description": "Application layer for the Ephemeral Rooms project",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "author": "Benjamin Rivas <benjaminrivas500@gmail.com>",
@@ -14,10 +14,11 @@
     "prepublishOnly": "npm run clean && npm run build"
   },
   "devDependencies": {
+    "@types/node": "^25.6.0",
     "typescript": "^6.0.2"
   },
   "dependencies": {
-    "redis": "^5.11.0",
+    "infra": "file:../infra",
     "shared": "file:../shared"
   }
 }

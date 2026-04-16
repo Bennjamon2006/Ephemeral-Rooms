@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { rooms, users } from "data";
+import { rooms, users } from "application";
 
 type Params = {
   code: string;
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest, { params }: Context) {
     }
   }
 
-  const result = await users.addUserToRoom(code, { name: username });
+  const result = await users.addUserToRoom(code, username);
 
   cookieStore.set("userId", result.id, {
     path: `/room/${code}`,
