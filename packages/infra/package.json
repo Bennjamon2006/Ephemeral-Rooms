@@ -20,6 +20,7 @@
     "prepublishOnly": "npm run clean && npm run build"
   },
   "devDependencies": {
+    "@types/ws": "^8.18.1",
     "typescript": "^6.0.2"
   },
   "dependencies": {

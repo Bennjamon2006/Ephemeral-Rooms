@@ -1,7 +1,7 @@
 import { roomsRepository } from "infra/storage";
 import { RoomState } from "shared/models";
-import generateCode from "../helpers/generateCode";
-import calculateExpiresAt from "../helpers/calculateExpiresAt";
+import generateCode from "@/helpers/generateCode";
+import calculateExpiresAt from "@/helpers/calculateExpiresAt";
 
 const ROOM_CODE_LENGTH = 6;
 

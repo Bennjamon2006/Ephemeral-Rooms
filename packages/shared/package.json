@@ -6,10 +6,10 @@
   "license": "MIT",
   "type": "commonjs",
   "exports": {
-    "./events": {
-      "import": "./dist/events/index.js",
-      "require": "./dist/events/index.js",
-      "types": "./dist/events/index.d.ts"
+    "./messaging": {
+      "import": "./dist/messaging/index.js",
+      "require": "./dist/messaging/index.js",
+      "types": "./dist/messaging/index.d.ts"
     },
     "./models": {
       "import": "./dist/models/index.js",

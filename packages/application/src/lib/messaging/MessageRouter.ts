@@ -1,5 +1,4 @@
-import Message, { MessageHandler } from "./Message";
-import MessageTransporter from "./MessageTransporter";
+import { Message, MessageHandler, MessageTransporter } from "shared/messaging";
 
 type MessagesMap = {
   [type: string]: Message<string, any>;

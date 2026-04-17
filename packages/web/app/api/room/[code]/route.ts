@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { rooms, users } from "application";
+import { rooms, users } from "application/use-cases";
 
 type Params = {
   code: string;

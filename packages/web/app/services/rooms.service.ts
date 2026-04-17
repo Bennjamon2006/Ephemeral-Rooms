@@ -1,4 +1,4 @@
-import { rooms } from "application";
+import { rooms } from "application/use-cases";
 import type { RoomState } from "shared/models";
 
 const getRoomByCode = async (code: string): Promise<RoomState | null> => {
