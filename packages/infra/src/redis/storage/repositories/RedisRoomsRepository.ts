@@ -1,6 +1,6 @@
 import type { RoomsRepository } from "shared/repositories";
 import type { RoomState } from "shared/models";
-import RedisConsumer from "../RedisConsumer";
+import RedisConsumer from "../../RedisConsumer";
 
 export default class RedisRoomsRepository
   extends RedisConsumer

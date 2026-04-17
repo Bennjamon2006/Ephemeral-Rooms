@@ -1,2 +1,4 @@
-export * as rooms from "./rooms";
-export * as users from "./users";
+import RoomsUseCases from "./rooms";
+import UsersUseCases from "./users";
+
+export { RoomsUseCases, UsersUseCases };

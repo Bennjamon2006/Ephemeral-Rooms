@@ -1,36 +1,43 @@
 import { randomUUID } from "crypto";
 import type { User } from "shared/models";
-import { usersRepository } from "infra/storage";
-import { rooms } from ".";
+import type { UsersRepository } from "shared/repositories";
+import RoomsUseCases from "./rooms";
 
-export const getUsersInRoom = async (roomCode: string): Promise<User[]> => {
-  return usersRepository.getRoomUsers(roomCode);
-};
+export default class UsersUseCases {
+  constructor(
+    private usersRepository: UsersRepository,
+    private rooms: RoomsUseCases,
+  ) {}
 
-export const addUserToRoom = async (
-  roomCode: string,
-  username: string,
-): Promise<User> => {
-  const userId = randomUUID();
+  public async getUsersInRoom(roomCode: string): Promise<User[]> {
+    return this.usersRepository.getRoomUsers(roomCode);
+  }
 
-  const user: User = {
-    id: userId,
-    name: username,
-  };
+  public async addUserToRoom(
+    roomCode: string,
+    username: string,
+  ): Promise<User> {
+    const userId = randomUUID();
 
-  await usersRepository.addUserToRoom(roomCode, user);
+    const user: User = {
+      id: userId,
+      name: username,
+    };
 
-  await rooms.updateRoom(roomCode, false);
+    await this.usersRepository.addUserToRoom(roomCode, user);
 
-  return user;
-};
+    await this.rooms.updateRoom(roomCode, false);
 
-export const checkUserInRoom = async (
-  roomCode: string,
-  userId: string,
-  username: string,
-): Promise<boolean> => {
-  const user = await usersRepository.getUser(roomCode, userId);
+    return user;
+  }
 
-  return user !== null && user.name === username;
-};
+  public async checkUserInRoom(
+    roomCode: string,
+    userId: string,
+    username: string,
+  ): Promise<boolean> {
+    const user = await this.usersRepository.getUser(roomCode, userId);
+
+    return user !== null && user.name === username;
+  }
+}

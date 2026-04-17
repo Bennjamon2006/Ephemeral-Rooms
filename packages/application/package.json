@@ -32,7 +32,6 @@
     "typescript": "^6.0.2"
   },
   "dependencies": {
-    "infra": "file:../infra",
     "shared": "file:../shared"
   }
 }

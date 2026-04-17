@@ -1,8 +1,10 @@
 import type { User } from "shared/models";
-import { users } from "application/use-cases";
+import createContainer from "../container";
 
 const getUsersInRoom = async (roomCode: string): Promise<User[]> => {
-  return users.getUsersInRoom(roomCode);
+  const { usersUseCases } = await createContainer();
+
+  return usersUseCases.getUsersInRoom(roomCode);
 };
 
 const usersService = {

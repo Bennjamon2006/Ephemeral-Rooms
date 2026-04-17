@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { rooms } from "application/use-cases";
+import createContainer from "@/app/container";
 
 export async function POST() {
   try {
-    const room = await rooms.createRoom();
+    const { roomsUseCases } = await createContainer();
+    const room = await roomsUseCases.createRoom();
 
     return NextResponse.json({ room }, { status: 201 });
   } catch (error) {

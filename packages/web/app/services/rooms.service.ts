@@ -1,8 +1,10 @@
-import { rooms } from "application/use-cases";
 import type { RoomState } from "shared/models";
+import createContainer from "../container";
 
 const getRoomByCode = async (code: string): Promise<RoomState | null> => {
-  return rooms.getRoomData(code);
+  const { roomsUseCases } = await createContainer();
+
+  return roomsUseCases.getRoomData(code);
 };
 
 const roomsService = {

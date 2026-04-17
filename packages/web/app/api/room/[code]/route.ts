@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { rooms, users } from "application/use-cases";
+import createContainer from "@/app/container";
 
 type Params = {
   code: string;
@@ -15,6 +15,7 @@ type Context = {
 };
 
 export async function POST(req: NextRequest, { params }: Context) {
+  const { usersUseCases } = await createContainer();
   const { code } = await params;
   const { username } = (await req.json()) as Body;
 
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest, { params }: Context) {
   const existingUserId = cookieStore.get("userId")?.value;
 
   if (existingUserId) {
-    const isUserInRoom = await users.checkUserInRoom(
+    const isUserInRoom = await usersUseCases.checkUserInRoom(
       code,
       existingUserId,
       username,
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest, { params }: Context) {
     }
   }
 
-  const result = await users.addUserToRoom(code, username);
+  const result = await usersUseCases.addUserToRoom(code, username);
 
   cookieStore.set("userId", result.id, {
     path: `/room/${code}`,
@@ -71,7 +72,8 @@ export async function GET(req: NextRequest, { params }: Context) {
     );
   }
 
-  const room = await rooms.getRoomData(code);
+  const { roomsUseCases } = await createContainer();
+  const room = await roomsUseCases.getRoomData(code);
 
   if (!room) {
     return NextResponse.json({ error: "Room not found" }, { status: 404 });

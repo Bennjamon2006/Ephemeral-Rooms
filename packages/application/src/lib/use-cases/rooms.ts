@@ -1,46 +1,43 @@
-import { roomsRepository } from "infra/storage";
 import { RoomState } from "shared/models";
+import { RoomsRepository } from "shared/repositories";
 import generateCode from "@/helpers/generateCode";
 import calculateExpiresAt from "@/helpers/calculateExpiresAt";
 
-const ROOM_CODE_LENGTH = 6;
+export default class RoomsUseCases {
+  private readonly ROOM_CODE_LENGTH = 6;
 
-export const getRoomData = async (
-  roomCode: string,
-): Promise<RoomState | null> => {
-  return roomsRepository.getRoomState(roomCode);
-};
+  constructor(private roomsRepository: RoomsRepository) {}
 
-type CreateRoomResult = RoomState & { code: string };
+  public async getRoomData(roomCode: string): Promise<RoomState | null> {
+    return this.roomsRepository.getRoomState(roomCode);
+  }
 
-export const createRoom = async (): Promise<CreateRoomResult> => {
-  while (true) {
-    const code = generateCode(ROOM_CODE_LENGTH);
+  public async createRoom(): Promise<RoomState & { code: string }> {
+    while (true) {
+      const code = generateCode(this.ROOM_CODE_LENGTH);
 
-    const roomState: RoomState = {
-      empty: true,
-      expiresAt: calculateExpiresAt("empty"),
-    };
-
-    const created = await roomsRepository.createRoom(code, roomState);
-
-    if (created) {
-      return {
-        code,
-        ...roomState,
+      const roomState: RoomState = {
+        empty: true,
+        expiresAt: calculateExpiresAt("empty"),
       };
+
+      const created = await this.roomsRepository.createRoom(code, roomState);
+
+      if (created) {
+        return {
+          code,
+          ...roomState,
+        };
+      }
     }
   }
-};
 
-export const updateRoom = async (
-  roomCode: string,
-  empty: boolean,
-): Promise<void> => {
-  const roomState: RoomState = {
-    empty,
-    expiresAt: calculateExpiresAt(empty ? "empty" : "occupied"),
-  };
+  public async updateRoom(roomCode: string, empty: boolean): Promise<void> {
+    const roomState: RoomState = {
+      empty,
+      expiresAt: calculateExpiresAt(empty ? "empty" : "occupied"),
+    };
 
-  await roomsRepository.setRoomState(roomCode, roomState);
-};
+    await this.roomsRepository.setRoomState(roomCode, roomState);
+  }
+}
