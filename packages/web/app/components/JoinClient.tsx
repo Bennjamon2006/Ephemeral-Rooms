@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "flowbite-react";
-import type { User, RoomState } from "shared";
+import type { User, RoomState } from "shared/models";
 import CustomButton from "./Button";
 import { useRouter } from "next/navigation";
 import useName from "../hooks/useName";

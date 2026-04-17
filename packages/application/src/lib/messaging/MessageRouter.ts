@@ -91,4 +91,9 @@ export default class MessageRouter<M extends MessagesMap> {
     await this.transporter.prepare();
     this.transporter.onMessage(this.handle.bind(this));
   }
+
+  public stop() {
+    this.transporter.close();
+    this.handlers.clear();
+  }
 }

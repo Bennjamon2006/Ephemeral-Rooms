@@ -13,6 +13,11 @@
       "import": "./dist/lib/use-cases/index.js",
       "require": "./dist/lib/use-cases/index.js",
       "types": "./dist/lib/use-cases/index.d.ts"
+    },
+    "./messaging": {
+      "import": "./dist/lib/messaging/index.js",
+      "require": "./dist/lib/messaging/index.js",
+      "types": "./dist/lib/messaging/index.d.ts"
     }
   },
   "scripts": {
