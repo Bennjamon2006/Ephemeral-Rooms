@@ -1,5 +1,5 @@
-import Message, { MessageHandler } from "./Message";
-import MessageTransporter from "./MessageTransporter";
-import * as messages from "./messages";
+import Message, { MessageHandler } from "./Message.js";
+import MessageTransporter from "./MessageTransporter.js";
+import * as messages from "./messages/index.js";
 
 export { Message, MessageTransporter, MessageHandler, messages };

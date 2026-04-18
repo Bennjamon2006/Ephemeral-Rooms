@@ -1,4 +1,4 @@
-import UsersRepository from "./users.repository";
-import RoomsRepository from "./rooms.repository";
+import UsersRepository from "./users.repository.js";
+import RoomsRepository from "./rooms.repository.js";
 
 export { UsersRepository, RoomsRepository };

@@ -1,7 +1,7 @@
 import { RoomState } from "shared/models";
 import { RoomsRepository } from "shared/repositories";
-import generateCode from "@/helpers/generateCode";
-import calculateExpiresAt from "@/helpers/calculateExpiresAt";
+import generateCode from "@/helpers/generateCode.js";
+import calculateExpiresAt from "@/helpers/calculateExpiresAt.js";
 
 export default class RoomsUseCases {
   private readonly ROOM_CODE_LENGTH = 6;

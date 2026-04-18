@@ -1,4 +1,4 @@
-import RoomsUseCases from "./rooms";
-import UsersUseCases from "./users";
+import RoomsUseCases from "./rooms.js";
+import UsersUseCases from "./users.js";
 
 export { RoomsUseCases, UsersUseCases };

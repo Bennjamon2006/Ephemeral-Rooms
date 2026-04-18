@@ -4,7 +4,7 @@
   "description": "Shared utilities and types for the Ephemeral Rooms project",
   "author": "Benjamin Rivas <benjaminrivas500@gmail.com>",
   "license": "MIT",
-  "type": "commonjs",
+  "type": "module",
   "exports": {
     "./messaging": {
       "import": "./dist/messaging/index.js",

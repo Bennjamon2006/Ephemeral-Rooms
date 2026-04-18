@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import type { User } from "shared/models";
 import type { UsersRepository } from "shared/repositories";
-import RoomsUseCases from "./rooms";
+import RoomsUseCases from "./rooms.js";
 
 export default class UsersUseCases {
   constructor(

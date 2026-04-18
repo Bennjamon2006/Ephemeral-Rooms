@@ -1,3 +1,3 @@
-import MessageRouter from "./MessageRouter";
+import MessageRouter from "./MessageRouter.js";
 
 export { MessageRouter };

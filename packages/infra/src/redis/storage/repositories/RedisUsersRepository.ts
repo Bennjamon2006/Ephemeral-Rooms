@@ -1,6 +1,6 @@
 import type { UsersRepository } from "shared/repositories";
 import type { User } from "shared/models";
-import RedisConsumer from "../../RedisConsumer";
+import RedisConsumer from "../../RedisConsumer.js";
 
 export default class RedisUsersRepository
   extends RedisConsumer

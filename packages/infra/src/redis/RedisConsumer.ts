@@ -1,5 +1,5 @@
 import { RedisClientType } from "redis";
-import RedisProvider from "./RedisProvider";
+import RedisProvider from "./RedisProvider.js";
 
 export default abstract class RedisConsumer {
   constructor(private readonly provider: RedisProvider) {}

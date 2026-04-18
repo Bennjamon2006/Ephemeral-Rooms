@@ -1,4 +1,4 @@
-import Message from "../Message";
+import Message from "../Message.js";
 
 export default class PingMessage extends Message<"ping", {}> {
   constructor(payload: {}, timestamp?: number, senderId?: string) {

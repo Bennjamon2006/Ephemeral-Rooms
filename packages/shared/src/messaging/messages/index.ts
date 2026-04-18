@@ -1,3 +1,3 @@
-import PingMessage from "./PingMessage";
+import PingMessage from "./PingMessage.js";
 
 export { PingMessage };

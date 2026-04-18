@@ -1,3 +1,3 @@
-export * from "./User";
-export * from "./RoomState";
-export * from "./Message";
+export * from "./User.js";
+export * from "./RoomState.js";
+export * from "./Message.js";

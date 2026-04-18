@@ -1,4 +1,4 @@
-import WSServerMessageTransporter from "./ws/WSServerMessageTransporter";
-import WSClientMessageTransporter from "./ws/WSClientMessageTransporter";
+import WSServerMessageTransporter from "./ws/WSServerMessageTransporter.js";
+import WSClientMessageTransporter from "./ws/WSClientMessageTransporter.js";
 
 export { WSServerMessageTransporter, WSClientMessageTransporter };
