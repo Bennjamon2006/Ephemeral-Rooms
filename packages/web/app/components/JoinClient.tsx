@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import useName from "../hooks/useName";
 import { useEffect, useState } from "react";
 import useTimeRemaing from "../hooks/useTimeRemaing";
+import useDispatch from "../hooks/useDispatch";
+import { PingMessage } from "../../../shared/dist/messaging/messages";
 
 type Props = {
   roomCode: string;
@@ -17,6 +19,8 @@ type Props = {
 export default function JoinClient({ roomCode, room, users }: Props) {
   const router = useRouter();
 
+  const dispatch = useDispatch();
+
   const { name, updateName } = useName();
   const timeRemaining = useTimeRemaing(room.expiresAt);
 
@@ -25,6 +29,8 @@ export default function JoinClient({ roomCode, room, users }: Props) {
 
   const disabled = loading || !name.trim() || result === "success";
   const timeInSeconds = Math.floor(timeRemaining / 1000);
+
+  dispatch(new PingMessage({}));
 
   useEffect(() => {
     if (timeRemaining === 0) {

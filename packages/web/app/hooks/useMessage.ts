@@ -7,6 +7,11 @@ export default function useMessage<T extends keyof MessageTypes>(
   handler: (message: MessageTypes[T]) => void,
 ) {
   const { router } = useContext(MessagingContext);
+
+  if (!router) {
+    throw new Error("useMessage must be used within a MessagingProvider");
+  }
+
   const handlerRef = useRef(handler);
 
   useEffect(() => {

@@ -3,12 +3,10 @@ import { MessageTransporter } from "shared/messaging";
 
 export default class WSServerMessageTransporter implements MessageTransporter {
   private readonly queue: string[] = [];
-  private isReady = false;
   private promise: Promise<void> | null = null;
 
   private onOpen?: () => void;
   private onError?: (err: ErrorEvent) => void;
-  private onClose?: () => void;
 
   constructor(private readonly socket: WebSocket) {}
 
@@ -21,11 +19,11 @@ export default class WSServerMessageTransporter implements MessageTransporter {
       this.socket.removeEventListener("error", this.onError);
     }
 
-    if (this.onClose) {
-      this.socket.removeEventListener("close", this.onClose);
-    }
-
     this.socket.removeAllListeners("message");
+  }
+
+  get isReady() {
+    return this.socket.readyState === WebSocket.OPEN;
   }
 
   private async waitConnection(): Promise<void> {
@@ -39,7 +37,6 @@ export default class WSServerMessageTransporter implements MessageTransporter {
 
     this.promise = new Promise((resolve, reject) => {
       this.onOpen = () => {
-        this.isReady = true;
         resolve();
       };
 
@@ -47,13 +44,8 @@ export default class WSServerMessageTransporter implements MessageTransporter {
         reject(err);
       };
 
-      this.onClose = () => {
-        this.isReady = false;
-      };
-
       this.socket.addEventListener("open", this.onOpen);
       this.socket.addEventListener("error", this.onError);
-      this.socket.addEventListener("close", this.onClose);
     });
 
     return this.promise;
