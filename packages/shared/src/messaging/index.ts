@@ -1,5 +1,12 @@
 import Message, { MessageHandler } from "./Message.js";
 import MessageTransporter from "./MessageTransporter.js";
-import * as messages from "./messages/index.js";
+import { MessagesMap, ResolveMessageType, messages } from "./messages/index.js";
 
-export { Message, MessageTransporter, MessageHandler, messages };
+export {
+  Message,
+  MessageTransporter,
+  MessageHandler,
+  MessagesMap,
+  ResolveMessageType,
+  messages,
+};

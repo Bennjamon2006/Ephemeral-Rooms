@@ -1,37 +1,42 @@
-import { Message, MessageHandler, MessageTransporter } from "shared/messaging";
+import {
+  messages,
+  MessagesMap,
+  MessageHandler,
+  MessageTransporter,
+  ResolveMessageType,
+} from "shared/messaging";
 
-type MessagesMap = {
-  [type: string]: Message<string, any>;
+type HandlerMap<K extends keyof MessagesMap> = {
+  [T in keyof MessagesMap[K]]?: Set<MessageHandler<ResolveMessageType<K, T>>>;
 };
 
-type MessageConstructor<T extends Message<string, any>> = new (
-  payload: T["payload"],
-  timestamp?: number,
-  senderId?: string,
-) => T;
-
-type MessagesMapWithConstructors<M extends MessagesMap> = {
-  [K in keyof M]: MessageConstructor<M[K]>;
-};
-
-export default class MessageRouter<M extends MessagesMap> {
-  private readonly handlers: Map<keyof M, Set<MessageHandler<any>>> = new Map();
+export default class MessageRouter<K extends keyof MessagesMap> {
+  private readonly handlers: HandlerMap<K> = {};
+  private readonly messages: MessagesMap[K];
 
   constructor(
     private readonly transporter: MessageTransporter,
-    private readonly messages: MessagesMapWithConstructors<M>,
-  ) {}
-
-  public on<T extends keyof M>(type: T, handler: MessageHandler<M[T]>) {
-    if (!this.handlers.has(type)) {
-      this.handlers.set(type, new Set());
-    }
-
-    this.handlers.get(type)!.add(handler);
+    private readonly scope: K,
+  ) {
+    this.messages = messages[scope];
   }
 
-  public once<T extends keyof M>(type: T, handler: MessageHandler<M[T]>) {
-    const wrapper = (message: M[T]) => {
+  public on<T extends keyof MessagesMap[K]>(
+    type: T,
+    handler: MessageHandler<ResolveMessageType<K, T>>,
+  ) {
+    if (!this.handlers[type]) {
+      this.handlers[type] = new Set();
+    }
+
+    this.handlers[type]!.add(handler);
+  }
+
+  public once<T extends keyof MessagesMap[K]>(
+    type: T,
+    handler: MessageHandler<ResolveMessageType<K, T>>,
+  ) {
+    const wrapper = (message: ResolveMessageType<K, T>) => {
       handler(message);
       this.off(type, wrapper);
     };
@@ -39,30 +44,49 @@ export default class MessageRouter<M extends MessagesMap> {
     this.on(type, wrapper);
   }
 
-  public off<T extends keyof M>(type: T, handler: MessageHandler<M[T]>) {
-    if (this.handlers.has(type)) {
-      this.handlers.get(type)!.delete(handler);
+  public off<T extends keyof MessagesMap[K]>(
+    type: T,
+    handler: MessageHandler<ResolveMessageType<K, T>>,
+  ) {
+    if (this.handlers[type]) {
+      this.handlers[type]!.delete(handler);
     }
   }
 
-  public send<T extends keyof M>(message: M[T]) {
+  public send<T extends keyof MessagesMap[K]>(
+    message: ResolveMessageType<K, T>,
+  ) {
     this.transporter.sendMessage(message.serialize());
   }
 
-  private deserialize<K extends keyof M>(raw: string): M[K] | null {
+  private resolveMessageClass<T extends keyof MessagesMap[K] & string>(
+    type: T,
+  ): MessagesMap[K][T] {
+    const MessageClass = this.messages[type];
+
+    if (!MessageClass) {
+      throw new Error(`Unknown message type: ${type}`);
+    }
+
+    return MessageClass;
+  }
+
+  private deserialize(
+    raw: string,
+  ): ResolveMessageType<K, keyof MessagesMap[K]> | null {
     try {
       const parsed = JSON.parse(raw);
-      const { type } = parsed;
+      const { type } = parsed as { type: keyof MessagesMap[K] };
 
       if (typeof type !== "string") {
         throw new Error("Message type must be a string");
       }
 
-      const MessageClass = this.messages[type as K];
-
-      if (!MessageClass) {
-        throw new Error(`Unknown message type: ${type}`);
-      }
+      const MessageClass = this.resolveMessageClass(type) as new (
+        payload: any,
+        timestamp: number,
+        senderId: string,
+      ) => ResolveMessageType<K, typeof type>;
 
       return new MessageClass(
         parsed.payload,
@@ -79,7 +103,8 @@ export default class MessageRouter<M extends MessagesMap> {
     const message = this.deserialize(raw);
 
     if (message) {
-      const handlers = this.handlers.get(message.type);
+      const type = message.type as keyof MessagesMap[K];
+      const handlers = this.handlers[type];
 
       if (handlers) {
         handlers.forEach((handler) => handler(message));
@@ -94,6 +119,9 @@ export default class MessageRouter<M extends MessagesMap> {
 
   public stop() {
     this.transporter.close();
-    this.handlers.clear();
+
+    for (const type in this.handlers) {
+      this.handlers[type as keyof MessagesMap[K]]!.clear();
+    }
   }
 }

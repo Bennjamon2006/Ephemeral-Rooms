@@ -1,20 +1,23 @@
 import { MessageRouter } from "application/messaging";
-import { messages } from "shared/messaging";
+import {
+  MessageHandler,
+  messages,
+  MessagesMap,
+  ResolveMessageType,
+} from "shared/messaging";
 
-export const clientMessages = {
-  ping: messages.PingMessage,
-  watchRoomData: messages.WatchRoomDataMessage,
-};
+type ClientMessage = MessagesMap["client"];
 
-type TypeOfClientMessages = typeof clientMessages;
+type ResolveClientMessageType<T extends keyof ClientMessage> =
+  ResolveMessageType<"client", T>;
 
-export type ClientMessage = {
-  [K in keyof TypeOfClientMessages]: InstanceType<TypeOfClientMessages[K]>;
-};
+type ClientMessageHandler<T extends keyof ClientMessage> = MessageHandler<
+  ResolveClientMessageType<T>
+>;
 
 export default class Client {
   constructor(
-    private readonly router: MessageRouter<ClientMessage>,
+    private readonly router: MessageRouter<"client">,
     public readonly roomCode: string,
     private _userId?: string,
   ) {}
@@ -37,26 +40,26 @@ export default class Client {
 
   public on<K extends keyof ClientMessage>(
     messageType: K,
-    handler: (message: ClientMessage[K]) => void,
+    handler: ClientMessageHandler<K>,
   ) {
     this.router.on(messageType, handler);
   }
 
   public once<K extends keyof ClientMessage>(
     messageType: K,
-    handler: (message: ClientMessage[K]) => void,
+    handler: ClientMessageHandler<K>,
   ) {
     this.router.once(messageType, handler);
   }
 
   public off<K extends keyof ClientMessage>(
     messageType: K,
-    handler: (message: ClientMessage[K]) => void,
+    handler: ClientMessageHandler<K>,
   ) {
     this.router.off(messageType, handler);
   }
 
-  public send<K extends keyof ClientMessage>(message: ClientMessage[K]) {
+  public send(message: ResolveClientMessageType<keyof ClientMessage>) {
     this.router.send(message);
   }
 }

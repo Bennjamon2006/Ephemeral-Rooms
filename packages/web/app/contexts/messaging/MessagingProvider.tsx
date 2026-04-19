@@ -4,7 +4,6 @@ import { useMemo } from "react";
 
 import { MessageRouter } from "application/messaging";
 import { WSClientMessageTransporter } from "infra/ws";
-import messageMap from "./messages";
 import { MessagingContext } from "./MessagingContext";
 
 type Props = {
@@ -17,7 +16,7 @@ export default function MessagingProvider({ children, url }: Props) {
     const ws = new WebSocket(url);
 
     const transporter = new WSClientMessageTransporter(ws);
-    const router = new MessageRouter(transporter, messageMap);
+    const router = new MessageRouter(transporter, "client");
 
     return router;
   }, [url]);

@@ -1,9 +1,8 @@
 import { MessageRouter } from "application/messaging";
-import { MessageTypes } from "./messages";
 import { createContext } from "react";
 
 interface MessagingContextValue {
-  router: MessageRouter<MessageTypes> | null;
+  router: MessageRouter<"client"> | null;
 }
 
 export const MessagingContext = createContext<MessagingContextValue>({

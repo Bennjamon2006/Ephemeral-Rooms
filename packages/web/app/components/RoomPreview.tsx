@@ -3,7 +3,6 @@ import useTimeRemaining from "../hooks/useTimeRemaing";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import useDispatch from "../hooks/useDispatch";
-import messageMap from "../contexts/messaging/messages";
 import { messages } from "shared/messaging";
 
 type Props = {
@@ -20,7 +19,7 @@ export default function RoomPreview({ roomCode, room, users }: Props) {
   const timeInSeconds = Math.floor(timeRemaining / 1000);
 
   useEffect(() => {
-    dispatch(new messages.WatchRoomDataMessage({ roomCode }));
+    dispatch(new messages.client.watchRoomData({ roomCode }));
   }, [dispatch, roomCode]);
 
   useEffect(() => {
