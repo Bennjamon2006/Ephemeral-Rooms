@@ -3,6 +3,7 @@ import { messages } from "shared/messaging";
 
 export const clientMessages = {
   ping: messages.PingMessage,
+  watchRoomData: messages.WatchRoomDataMessage,
 };
 
 type TypeOfClientMessages = typeof clientMessages;

@@ -1,7 +1,7 @@
 import { messages } from "shared/messaging";
 
 const messageMap = {
-  ping: messages.PingMessage,
+  WatchRoomData: messages.WatchRoomDataMessage,
 };
 
 export default messageMap;

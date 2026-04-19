@@ -12,10 +12,10 @@
       "require": "./dist/redis/index.js",
       "types": "./dist/redis/index.d.ts"
     },
-    "./messaging": {
-      "import": "./dist/messaging/index.js",
-      "require": "./dist/messaging/index.js",
-      "types": "./dist/messaging/index.d.ts"
+    "./ws": {
+      "import": "./dist/ws/index.js",
+      "require": "./dist/ws/index.js",
+      "types": "./dist/ws/index.d.ts"
     }
   },
   "scripts": {

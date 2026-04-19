@@ -5,11 +5,11 @@ export default class ClientController {
   constructor(private readonly client: Client) {}
 
   public bindHandlers(hub: ClientsHub) {
-    this.client.on("ping", () => {
+    this.client.on("watchRoomData", (message) => {
       console.log(
-        "Received ping from client",
+        "Received watchRoomData message from client",
         this.client.userId,
-        this.client.roomCode,
+        message,
       );
     });
   }

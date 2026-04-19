@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 
 import { MessageRouter } from "application/messaging";
-import { WSClientMessageTransporter } from "infra/messaging";
+import { WSClientMessageTransporter } from "infra/ws";
 import messageMap from "./messages";
 import { MessagingContext } from "./MessagingContext";
 
