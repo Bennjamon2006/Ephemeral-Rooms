@@ -42,7 +42,9 @@ export default class Client {
     messageType: K,
     handler: ClientMessageHandler<K>,
   ) {
-    this.router.on(messageType, handler);
+    this.router.on(messageType, (message) => {
+      handler(message);
+    });
   }
 
   public once<K extends keyof ClientMessage>(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 
 import { MessageRouter } from "application/messaging";
 import { WSClientMessageTransporter } from "infra/ws";
@@ -12,17 +12,34 @@ type Props = {
 };
 
 export default function MessagingProvider({ children, url }: Props) {
-  const router = useMemo(() => {
-    const ws = new WebSocket(url);
+  const [router, setRouter] = useState<MessageRouter<"client"> | null>(null);
+  const [connected, setConnected] = useState(false);
 
-    const transporter = new WSClientMessageTransporter(ws);
-    const router = new MessageRouter(transporter, "client");
+  useEffect(() => {
+    const socket = new WebSocket(url);
+    const transporter = new WSClientMessageTransporter(socket);
+    const messageRouter = new MessageRouter(transporter, "client");
 
-    return router;
+    setConnected(false);
+
+    messageRouter
+      .start()
+      .then(() => {
+        setRouter(messageRouter);
+        setConnected(true);
+      })
+      .catch((error) => {
+        console.error("Failed to start MessageRouter:", error);
+      });
+
+    return () => {
+      messageRouter.stop();
+      socket.close();
+    };
   }, [url]);
 
   return (
-    <MessagingContext.Provider value={{ router }}>
+    <MessagingContext.Provider value={{ router, connected }}>
       {children}
     </MessagingContext.Provider>
   );

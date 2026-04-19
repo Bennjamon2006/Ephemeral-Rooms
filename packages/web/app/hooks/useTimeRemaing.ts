@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-export default function useTimeRemaining(expiresAt: number) {
+export default function useTimeRemaining(expiresAt: number, active = true) {
   const [timeRemaining, setTimeRemaining] = useState(() =>
     Math.max(0, expiresAt - Date.now()),
   );
@@ -29,6 +29,11 @@ export default function useTimeRemaining(expiresAt: number) {
   };
 
   useEffect(() => {
+    if (!active) {
+      clearTimers();
+      return;
+    }
+
     clearTimers();
 
     tick(); // inmediato
@@ -41,7 +46,7 @@ export default function useTimeRemaining(expiresAt: number) {
 
     return clearTimers;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expiresAt]);
+  }, [expiresAt, active]);
 
   return timeRemaining;
 }

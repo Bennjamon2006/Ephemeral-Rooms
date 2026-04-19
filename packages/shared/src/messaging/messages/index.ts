@@ -1,13 +1,15 @@
 import Message from "../Message.js";
-import PingMessage from "./PingMessage.js";
+import RoomDataUpdateMessage from "./RoomDataUpdateMessage.js";
 import WatchRoomDataMessage from "./WatchRoomDataMessage.js";
+import RoomUpdateMessage from "./RoomUpdate.js";
 
 export const messages = {
   system: {
-    ping: PingMessage,
+    roomDataUpdate: RoomDataUpdateMessage,
   },
   client: {
     watchRoomData: WatchRoomDataMessage,
+    roomUpdate: RoomUpdateMessage,
   },
 };
 

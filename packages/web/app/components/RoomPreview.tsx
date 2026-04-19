@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import useDispatch from "../hooks/useDispatch";
 import { messages } from "shared/messaging";
+import useMessage from "../hooks/useMessage";
+import useRoomState from "../hooks/useRoomState";
 
 type Props = {
   roomCode: string;
@@ -13,14 +15,14 @@ type Props = {
 
 export default function RoomPreview({ roomCode, room, users }: Props) {
   const router = useRouter();
-  const dispatch = useDispatch();
 
-  const timeRemaining = useTimeRemaining(room.expiresAt);
-  const timeInSeconds = Math.floor(timeRemaining / 1000);
+  const roomState = useRoomState(roomCode, room);
 
-  useEffect(() => {
-    dispatch(new messages.client.watchRoomData({ roomCode }));
-  }, [dispatch, roomCode]);
+  const timeRemaining = useTimeRemaining(
+    roomState.expiresAt,
+    users.length === 0,
+  );
+  const timeInSeconds = Math.ceil(timeRemaining / 1000);
 
   useEffect(() => {
     if (timeRemaining === 0) {
@@ -32,13 +34,15 @@ export default function RoomPreview({ roomCode, room, users }: Props) {
 
   return (
     <h2 className="text-lg font-semibold text-gray-900 dark:text-white text-center">
-      {timeRemaining === 0
-        ? "La sala ha expirado. Volviendo al inicio..."
-        : users.length > 1
-          ? `${users[0].name} y ${users.length - 1} más están en esta sala`
-          : users.length === 1
-            ? `${users[0].name} está en esta sala`
-            : `No hay usuarios conectados, la sala se eliminará en ${timeInSeconds} segundos`}
+      {!roomState.empty && users.length === 0
+        ? "Alguien está en la sala"
+        : timeRemaining === 0
+          ? "La sala ha expirado. Volviendo al inicio..."
+          : users.length > 1
+            ? `${users[0].name} y ${users.length - 1} más están en esta sala`
+            : users.length === 1
+              ? `${users[0].name} está en esta sala`
+              : `No hay usuarios conectados, la sala se eliminará en ${timeInSeconds} segundos`}
     </h2>
   );
 }

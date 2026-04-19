@@ -3,8 +3,9 @@ import { createContext } from "react";
 
 interface MessagingContextValue {
   router: MessageRouter<"client"> | null;
+  connected: boolean;
 }
 
-export const MessagingContext = createContext<MessagingContextValue>({
-  router: null,
-});
+export const MessagingContext = createContext<MessagingContextValue | null>(
+  null,
+);

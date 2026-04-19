@@ -18,6 +18,16 @@
       "import": "./dist/lib/messaging/index.js",
       "require": "./dist/lib/messaging/index.js",
       "types": "./dist/lib/messaging/index.d.ts"
+    },
+    "./classes": {
+      "import": "./dist/lib/classes/index.js",
+      "require": "./dist/lib/classes/index.js",
+      "types": "./dist/lib/classes/index.d.ts"
+    },
+    "./interfaces": {
+      "import": "./dist/lib/interfaces/index.js",
+      "require": "./dist/lib/interfaces/index.js",
+      "types": "./dist/lib/interfaces/index.d.ts"
     }
   },
   "scripts": {

@@ -10,8 +10,8 @@ export default class RedisMessageTransporter
   private static provider: RedisProvider;
 
   public static async setup(provider: RedisProvider): Promise<void> {
-    if (this.provider)
-      throw new Error("RedisMessageTransporter provider already set");
+    if (this.provider) return;
+    // throw new Error("RedisMessageTransporter provider already set");
 
     await provider.connect();
 
@@ -46,6 +46,8 @@ export default class RedisMessageTransporter
     try {
       this.pubClient = await this.getClient();
       this.subClient = this.pubClient.duplicate();
+
+      await this.subClient.connect();
 
       await this.subClient.subscribe(this.channel, (message) => {
         this.listeners.forEach((handler) => handler(message));

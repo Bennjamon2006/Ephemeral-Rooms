@@ -114,6 +114,7 @@ export default class MessageRouter<K extends keyof MessagesMap> {
 
   public async start() {
     await this.transporter.prepare();
+
     this.transporter.onMessage(this.handle.bind(this));
   }
 

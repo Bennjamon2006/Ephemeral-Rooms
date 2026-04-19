@@ -1,21 +1,33 @@
-import { useContext, useCallback } from "react";
+import { useContext, useCallback, useRef } from "react";
 import { MessagingContext } from "../contexts/messaging/MessagingContext";
-import { MessageTypes } from "../contexts/messaging/messages";
+import { messages } from "shared/messaging";
 
-type Dispatch = (message: MessageTypes[keyof MessageTypes]) => void;
+type ClientMessage = InstanceType<
+  (typeof messages.client)[keyof typeof messages.client]
+>;
+
+type Dispatch = (message: ClientMessage) => void;
 
 export default function useDispatch(): Dispatch {
-  const { router } = useContext(MessagingContext);
+  const context = useContext(MessagingContext);
+  const queueRef = useRef<ClientMessage[]>([]);
 
-  if (!router) {
+  if (!context) {
     throw new Error("useDispatch must be used within a MessagingProvider");
   }
 
+  const { router, connected } = context;
+
   const dispatch: Dispatch = useCallback(
     (message) => {
-      router.send(message);
+      if (!connected) {
+        queueRef.current.push(message);
+        return;
+      }
+
+      router!.send(message);
     },
-    [router],
+    [router, connected],
   );
 
   return dispatch;

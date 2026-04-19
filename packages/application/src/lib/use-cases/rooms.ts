@@ -2,11 +2,15 @@ import { RoomState } from "shared/models";
 import { RoomsRepository } from "shared/repositories";
 import generateCode from "@/helpers/generateCode.js";
 import calculateExpiresAt from "@/helpers/calculateExpiresAt.js";
+import { RoomContextFactory } from "../interfaces/index.js";
 
 export default class RoomsUseCases {
   private readonly ROOM_CODE_LENGTH = 6;
 
-  constructor(private roomsRepository: RoomsRepository) {}
+  constructor(
+    private readonly roomsRepository: RoomsRepository,
+    private readonly roomContextFactory: RoomContextFactory,
+  ) {}
 
   public async getRoomData(roomCode: string): Promise<RoomState | null> {
     return this.roomsRepository.getRoomState(roomCode);
@@ -39,5 +43,18 @@ export default class RoomsUseCases {
     };
 
     await this.roomsRepository.setRoomState(roomCode, roomState);
+
+    const roomContext = await this.roomContextFactory.create(roomCode);
+
+    roomContext.sendRoomDataUpdate(roomState);
+  }
+
+  public async watchRoomData(
+    roomCode: string,
+    callback: (roomState: RoomState) => void,
+  ): Promise<() => void> {
+    const roomContext = await this.roomContextFactory.create(roomCode);
+
+    return roomContext.onRoomStateChange(callback);
   }
 }

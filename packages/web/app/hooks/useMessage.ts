@@ -1,16 +1,18 @@
 import { useContext, useRef, useEffect } from "react";
 import { MessagingContext } from "../contexts/messaging/MessagingContext";
-import { MessageTypes } from "../contexts/messaging/messages";
+import { messages, ResolveMessageType } from "shared/messaging";
 
-export default function useMessage<T extends keyof MessageTypes>(
+export default function useMessage<T extends keyof typeof messages.client>(
   type: T,
-  handler: (message: MessageTypes[T]) => void,
+  handler: (message: ResolveMessageType<"client", T>) => void,
 ) {
-  const { router } = useContext(MessagingContext);
+  const context = useContext(MessagingContext);
 
-  if (!router) {
+  if (!context) {
     throw new Error("useMessage must be used within a MessagingProvider");
   }
+
+  const { router, connected } = context;
 
   const handlerRef = useRef(handler);
 
@@ -19,7 +21,9 @@ export default function useMessage<T extends keyof MessageTypes>(
   }, [handler]);
 
   useEffect(() => {
-    const messageHandler = (message: MessageTypes[T]) => {
+    if (!connected) return;
+
+    const messageHandler = (message: ResolveMessageType<"client", T>) => {
       handlerRef.current(message);
     };
 
@@ -28,5 +32,5 @@ export default function useMessage<T extends keyof MessageTypes>(
     return () => {
       router!.off(type, messageHandler);
     };
-  }, [router, type]);
+  }, [router, type, connected]);
 }

@@ -1,15 +1,23 @@
-import Client, { ClientMessage } from "./Client.js";
+import Client from "./Client.js";
 import ClientController from "./ClientController.js";
+import { MessagesMap } from "shared/messaging";
+import createContainer from "./container/index.js";
+
+type ClientMessage = {
+  [K in keyof MessagesMap["client"]]: InstanceType<MessagesMap["client"][K]>;
+};
 
 export default class ClientsHub {
   private readonly clients: Set<Client> = new Set();
   private readonly controllers: Map<Client, ClientController> = new Map();
 
-  public addClient(client: Client) {
+  public async addClient(client: Client) {
     console.log("New client added", client.userId, client.roomCode);
 
+    const container = await createContainer();
+
     this.clients.add(client);
-    const controller = new ClientController(client);
+    const controller = new ClientController(client, container.roomsUseCases);
 
     controller.bindHandlers(this);
 
@@ -37,7 +45,9 @@ export default class ClientsHub {
     handler: (message: ClientMessage[K], client: Client) => void,
   ) {
     for (const client of this.clients) {
-      client.on(messageType, (message) => handler(message, client));
+      client.on(messageType, (message) =>
+        handler(message as ClientMessage[K], client),
+      );
     }
   }
 
@@ -46,7 +56,9 @@ export default class ClientsHub {
     handler: (message: ClientMessage[K], client: Client) => void,
   ) {
     for (const client of this.clients) {
-      client.off(messageType, (message) => handler(message, client));
+      client.off(messageType, (message) =>
+        handler(message as ClientMessage[K], client),
+      );
     }
   }
 
