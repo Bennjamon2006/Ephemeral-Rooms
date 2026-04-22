@@ -13,9 +13,15 @@ type Props = {
   roomCode: string;
   room: RoomState;
   users: User[];
+  onlineUsers: string[];
 };
 
-export default function JoinClient({ roomCode, room, users }: Props) {
+export default function JoinClient({
+  roomCode,
+  room,
+  users,
+  onlineUsers,
+}: Props) {
   const router = useRouter();
 
   const { name, updateName } = useName();
@@ -99,7 +105,12 @@ export default function JoinClient({ roomCode, room, users }: Props) {
         </div>
 
         <div className="mt-2">
-          <RoomPreview roomCode={roomCode} room={room} users={users} />
+          <RoomPreview
+            roomCode={roomCode}
+            room={room}
+            users={users}
+            onlineUsers={onlineUsers}
+          />
         </div>
       </Card>
     </div>

@@ -17,7 +17,11 @@ export default class ClientsHub {
     const container = await createContainer();
 
     this.clients.add(client);
-    const controller = new ClientController(client, container.roomsUseCases);
+    const controller = new ClientController(
+      client,
+      container.roomsUseCases,
+      container.usersUseCases,
+    );
 
     controller.bindHandlers(this);
 

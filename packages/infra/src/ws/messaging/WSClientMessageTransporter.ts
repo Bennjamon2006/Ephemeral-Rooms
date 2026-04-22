@@ -94,8 +94,6 @@ export default class WSClientMessageTransporter implements MessageTransporter {
 
   public onMessage(handler: (raw: string) => void): void {
     const messageListener = (event: MessageEvent) => {
-      console.log(event);
-
       if (typeof event.data === "string") {
         handler(event.data);
       } else {

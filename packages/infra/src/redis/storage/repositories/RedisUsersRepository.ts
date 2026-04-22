@@ -51,4 +51,18 @@ export default class RedisUsersRepository
 
     return this.safeParseUser(userJson);
   }
+
+  public async setUserOnline(roomCode: string, userId: string): Promise<void> {
+    const key = `room:${roomCode}:onlineUsers`;
+    const client = await this.getClient();
+
+    await client.sAdd(key, userId);
+  }
+
+  public async getOnlineRoomUsers(roomCode: string): Promise<string[]> {
+    const key = `room:${roomCode}:onlineUsers`;
+    const client = await this.getClient();
+
+    return client.sMembers(key);
+  }
 }

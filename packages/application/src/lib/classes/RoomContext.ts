@@ -1,5 +1,5 @@
 import { MessageRouter } from "@/lib/messaging";
-import { RoomState } from "shared/models";
+import { RoomState, User } from "shared/models";
 import { messages, ResolveMessageType } from "shared/messaging";
 
 type Payload<T extends keyof typeof messages.system> = ResolveMessageType<
@@ -36,5 +36,13 @@ export default class RoomContext {
     this.systemMessageRouter.send(
       new messages.system.roomDataUpdate({ roomState }),
     );
+  }
+
+  public onUserCreated(callback: (payload: Payload<"userCreated">) => void) {
+    return this.on("userCreated", callback);
+  }
+
+  public sendUserCreated(user: User) {
+    this.systemMessageRouter.send(new messages.system.userCreated({ user }));
   }
 }

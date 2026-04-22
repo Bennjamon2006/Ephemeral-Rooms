@@ -22,7 +22,11 @@ export default async function createContainer(): Promise<Container> {
   const roomContextFactory = new RedisRoomContextFactory(redisProvider);
 
   const roomsUseCases = new RoomsUseCases(roomsRepository, roomContextFactory);
-  const usersUseCases = new UsersUseCases(usersRepository, roomsUseCases);
+  const usersUseCases = new UsersUseCases(
+    usersRepository,
+    roomsUseCases,
+    roomContextFactory,
+  );
 
   return {
     usersUseCases,

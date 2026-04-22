@@ -7,8 +7,15 @@ const getUsersInRoom = async (roomCode: string): Promise<User[]> => {
   return usersUseCases.getUsersInRoom(roomCode);
 };
 
+const getOnlineUsersInRoom = async (roomCode: string): Promise<string[]> => {
+  const { usersUseCases } = await createContainer();
+
+  return usersUseCases.getOnlineUsersInRoom(roomCode);
+};
+
 const usersService = {
   getUsersInRoom,
+  getOnlineUsersInRoom,
 };
 
 export default usersService;

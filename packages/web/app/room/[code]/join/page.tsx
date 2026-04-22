@@ -40,12 +40,18 @@ export default async function Room({ params }: Props) {
     );
   }
 
-  console.log(room);
-  const users: User[] = room.empty
-    ? []
-    : await usersService.getUsersInRoom(resolvedParams.code);
+  const users: User[] = await usersService.getUsersInRoom(resolvedParams.code);
+
+  const onlineUsers = await usersService.getOnlineUsersInRoom(
+    resolvedParams.code,
+  );
 
   return (
-    <JoinClient roomCode={resolvedParams.code} room={room} users={users} />
+    <JoinClient
+      roomCode={resolvedParams.code}
+      room={room}
+      users={users}
+      onlineUsers={onlineUsers}
+    />
   );
 }

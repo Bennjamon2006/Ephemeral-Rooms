@@ -24,13 +24,14 @@
   },
   "private": true,
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc -w",
+    "build": "tsc && tsc-alias",
+    "dev": "tsc -w & tsc-alias -w",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run clean && npm run build"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "^6.0.2"
   }
 }
