@@ -1,22 +1,21 @@
 import { randomUUID } from "crypto";
 import type { User } from "shared/models";
 import type { UsersRepository } from "shared/repositories";
-import RoomsUseCases from "./rooms.js";
 import RoomContextFactory from "@/lib/interfaces/RoomContextFactory.js";
 import MessageRouter from "@/lib/messaging/MessageRouter.js";
+import { messages } from "shared/messaging";
 
 export default class UsersUseCases {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly rooms: RoomsUseCases,
     private readonly roomContextFactory: RoomContextFactory,
     private readonly systemMessageRouter: MessageRouter<"system">,
   ) {}
 
   public async init(): Promise<void> {
-    this.systemMessageRouter.on("roomDataUpdate", async (message) => {
+    this.systemMessageRouter.on("roomDataUpdated", async (message) => {
       if (!message.payload.roomCode) {
-        console.warn("Received roomDataUpdate without roomCode");
+        console.warn("Received roomDataUpdated without roomCode");
         return;
       }
 
@@ -42,8 +41,6 @@ export default class UsersUseCases {
     };
 
     await this.usersRepository.addUserToRoom(roomCode, user);
-
-    await this.rooms.updateRoom(roomCode, false);
 
     const roomContext = await this.roomContextFactory.create(roomCode);
 
@@ -75,6 +72,10 @@ export default class UsersUseCases {
 
   public async setUserOnline(roomCode: string, userId: string): Promise<void> {
     await this.usersRepository.setUserOnline(roomCode, userId);
+
+    this.systemMessageRouter.send(
+      new messages.commands.updateRoom({ empty: false, roomCode }),
+    );
   }
 
   public async getOnlineUsersInRoom(roomCode: string): Promise<string[]> {
@@ -84,16 +85,19 @@ export default class UsersUseCases {
   public async setUserOffline(roomCode: string, userId: string): Promise<void> {
     await this.usersRepository.setUserOffline(roomCode, userId);
 
-    // Efecto secundario, no se espera
-    this.getOnlineUsersInRoom(roomCode).then((onlineUsers) => {
-      if (onlineUsers.length === 0) {
-        this.rooms.updateRoom(roomCode, true); // Marcar la sala como inactiva si no hay usuarios en línea
-      }
-    });
+    const onlineUsers = await this.usersRepository.getOnlineRoomUsers(roomCode);
+
+    if (onlineUsers.length === 0) {
+      this.systemMessageRouter.send(
+        new messages.commands.updateRoom({ empty: true, roomCode }),
+      );
+    }
   }
 
   public async syncUsersOnRoom(
     roomCode: string,
-    expiresAt: Date,
-  ): Promise<void> {}
+    expiresAt: number,
+  ): Promise<void> {
+    await this.usersRepository.setTTLs(roomCode, expiresAt);
+  }
 }

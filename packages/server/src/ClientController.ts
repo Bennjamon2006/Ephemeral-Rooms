@@ -17,7 +17,7 @@ export default class ClientController {
       const cleanup = await this.roomsUseCases.watchRoomData(
         this.client.roomCode,
         (roomState) => {
-          this.client.send(new messages.client.roomUpdate({ roomState }));
+          this.client.send(new messages.events.roomDataUpdated({ roomState }));
         },
       );
 
@@ -32,7 +32,7 @@ export default class ClientController {
       await this.usersUseCases.setUserOnline(this.client.roomCode, userId);
 
       hub.broadcastMessage(
-        new messages.client.userJoined({ userId }),
+        new messages.events.userJoined({ userId }),
         (client) =>
           client.roomCode === this.client.roomCode && client !== this.client,
       );
@@ -43,7 +43,7 @@ export default class ClientController {
         this.client.roomCode,
         (user) => {
           this.client.send(
-            new messages.client.userCreated({
+            new messages.events.userCreated({
               user,
             }),
           );
@@ -62,7 +62,7 @@ export default class ClientController {
         await this.usersUseCases.setUserOffline(this.client.roomCode, userId);
 
         hub.broadcastMessage(
-          new messages.client.userLeft({ userId }),
+          new messages.events.userLeft({ userId }),
           (client) =>
             client.roomCode === this.client.roomCode && client !== this.client,
         );

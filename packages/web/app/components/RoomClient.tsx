@@ -25,7 +25,7 @@ export default function RoomClient({
   useEffect(() => {
     console.log("Dispatching");
 
-    dispatch(new messages.client.auth({ userId }));
+    dispatch(new messages.commands.auth({ userId }));
   }, [userId, roomCode, dispatch]);
 
   return (

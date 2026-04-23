@@ -31,7 +31,7 @@ export default function RoomPreview({
 
   const timeRemaining = useTimeRemaining(
     roomState.expiresAt,
-    users.length === 0,
+    activeUsers.length === 0,
   );
   const timeInSeconds = Math.ceil(timeRemaining / 1000);
 

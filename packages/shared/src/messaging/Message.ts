@@ -1,4 +1,8 @@
 export default abstract class Message<T extends string, P> {
+  public static isMessage(obj: any): obj is Message<string, any> {
+    return obj instanceof Message;
+  }
+
   constructor(
     public readonly type: T,
     public readonly payload: P,

@@ -15,6 +15,12 @@ export default class RoomsUseCases {
     private readonly systemMessageRouter: MessageRouter<"system">,
   ) {}
 
+  public async init(): Promise<void> {
+    this.systemMessageRouter.on("updateRoom", async (message) => {
+      await this.updateRoom(message.payload.roomCode, message.payload.empty);
+    });
+  }
+
   public async getRoomData(roomCode: string): Promise<RoomState | null> {
     return this.roomsRepository.getRoomState(roomCode);
   }
@@ -48,7 +54,7 @@ export default class RoomsUseCases {
     await this.roomsRepository.setRoomState(roomCode, roomState);
 
     this.systemMessageRouter.send(
-      new messages.system.roomDataUpdate({ roomCode, roomState }),
+      new messages.events.roomDataUpdated({ roomCode, roomState }),
     );
 
     const roomContext = await this.roomContextFactory.create(roomCode);

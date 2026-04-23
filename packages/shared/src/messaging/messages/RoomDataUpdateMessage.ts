@@ -6,12 +6,12 @@ type Payload = {
   roomCode?: string; // Optional: Only included in system messages, not in client messages
 };
 
-export default class RoomDataUpdateMessage extends Message<
-  "roomDataUpdate",
+export default class RoomDataUpdatedMessage extends Message<
+  "roomDataUpdated",
   Payload
 > {
   constructor(payload: Payload) {
-    super("roomDataUpdate", payload);
+    super("roomDataUpdated", payload);
   }
 
   public validate(): boolean {

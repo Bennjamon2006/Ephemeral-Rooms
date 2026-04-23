@@ -1,3 +1,6 @@
-import MessageRouter from "./MessageRouter.js";
+import MessageRouter, {
+  SystemMessages,
+  ClientMessages,
+} from "./MessageRouter.js";
 
-export { MessageRouter };
+export { MessageRouter, SystemMessages, ClientMessages };

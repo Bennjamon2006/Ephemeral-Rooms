@@ -15,7 +15,7 @@ export default function useUsers(initialUsers: User[]) {
   });
 
   useEffect(() => {
-    dispatch(new messages.client.watchUserCreated());
+    dispatch(new messages.commands.watchUserCreated());
   }, [dispatch]);
 
   return users;

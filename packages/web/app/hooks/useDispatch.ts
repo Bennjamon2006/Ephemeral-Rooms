@@ -1,10 +1,8 @@
 import { useContext, useCallback, useRef } from "react";
 import { MessagingContext } from "../contexts/messaging/MessagingContext";
-import { messages } from "shared/messaging";
+import { ClientMessages } from "application/messaging";
 
-type ClientMessage = InstanceType<
-  (typeof messages.client)[keyof typeof messages.client]
->;
+type ClientMessage = InstanceType<ClientMessages[keyof ClientMessages]>;
 
 type Dispatch = (message: ClientMessage) => void;
 

@@ -1,10 +1,14 @@
 import { useContext, useRef, useEffect } from "react";
 import { MessagingContext } from "../contexts/messaging/MessagingContext";
-import { messages, ResolveMessageType } from "shared/messaging";
+import { ClientMessages } from "application/messaging";
 
-export default function useMessage<T extends keyof typeof messages.client>(
+type ResolveMessageType<T extends keyof ClientMessages> = InstanceType<
+  ClientMessages[T]
+>;
+
+export default function useMessage<T extends keyof ClientMessages>(
   type: T,
-  handler: (message: ResolveMessageType<"client", T>) => void,
+  handler: (message: ResolveMessageType<T>) => void,
 ) {
   const context = useContext(MessagingContext);
 
@@ -23,7 +27,7 @@ export default function useMessage<T extends keyof typeof messages.client>(
   useEffect(() => {
     if (!connected) return;
 
-    const messageHandler = (message: ResolveMessageType<"client", T>) => {
+    const messageHandler = (message: ResolveMessageType<T>) => {
       handlerRef.current(message);
     };
 

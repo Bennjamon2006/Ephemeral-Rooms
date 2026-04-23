@@ -1,10 +1,68 @@
 import {
   messages,
-  MessagesMap,
   MessageHandler,
   MessageTransporter,
-  ResolveMessageType,
+  Message,
 } from "shared/messaging";
+
+type MapMessageDefinitions<
+  C extends keyof typeof messages.commands,
+  E extends keyof typeof messages.events,
+> = {
+  [K in C]: (typeof messages.commands)[K];
+} & {
+  [K in E]: (typeof messages.events)[K];
+};
+
+export type SystemMessages = MapMessageDefinitions<
+  "updateRoom" | "watchRoomData" | "watchUserCreated",
+  "roomDataUpdated" | "userCreated"
+>;
+
+export type ClientMessages = MapMessageDefinitions<
+  "watchUserCreated" | "watchRoomData" | "auth",
+  "userJoined" | "userLeft" | "userCreated" | "roomDataUpdated"
+>;
+
+const scopes: {
+  system: SystemMessages;
+  client: ClientMessages;
+} = {
+  system: {
+    updateRoom: messages.commands.updateRoom,
+    roomDataUpdated: messages.events.roomDataUpdated,
+    watchRoomData: messages.commands.watchRoomData,
+    userCreated: messages.events.userCreated,
+    watchUserCreated: messages.commands.watchUserCreated,
+  },
+  client: {
+    userJoined: messages.events.userJoined,
+    userLeft: messages.events.userLeft,
+    userCreated: messages.events.userCreated,
+    roomDataUpdated: messages.events.roomDataUpdated,
+    watchRoomData: messages.commands.watchRoomData,
+    watchUserCreated: messages.commands.watchUserCreated,
+    auth: messages.commands.auth,
+  },
+};
+
+type MessagesMap = {
+  system: {
+    [K in keyof SystemMessages]: SystemMessages[K];
+  };
+  client: {
+    [K in keyof ClientMessages]: ClientMessages[K];
+  };
+};
+
+type ResolveMessageType<
+  S extends keyof MessagesMap,
+  T extends keyof MessagesMap[S],
+> = MessagesMap[S][T] extends new (...args: any[]) => infer R
+  ? R extends Message<any, any>
+    ? R
+    : never
+  : never;
 
 type HandlerMap<K extends keyof MessagesMap> = {
   [T in keyof MessagesMap[K]]?: Set<MessageHandler<ResolveMessageType<K, T>>>;
@@ -16,9 +74,9 @@ export default class MessageRouter<K extends keyof MessagesMap> {
 
   constructor(
     private readonly transporter: MessageTransporter,
-    private readonly scope: K,
+    scope: K,
   ) {
-    this.messages = messages[scope];
+    this.messages = scopes[scope];
   }
 
   public on<T extends keyof MessagesMap[K]>(
@@ -53,10 +111,10 @@ export default class MessageRouter<K extends keyof MessagesMap> {
     }
   }
 
-  public send<T extends keyof MessagesMap[K]>(
-    message: ResolveMessageType<K, T>,
-  ) {
-    this.transporter.sendMessage(message.serialize());
+  public send(message: ResolveMessageType<K, keyof MessagesMap[K]>) {
+    const msg = message as Message<any, any>;
+
+    this.transporter.sendMessage(msg.serialize());
   }
 
   private resolveMessageClass<T extends keyof MessagesMap[K] & string>(
@@ -71,9 +129,9 @@ export default class MessageRouter<K extends keyof MessagesMap> {
     return MessageClass;
   }
 
-  private deserialize(
+  private deserialize<T extends keyof MessagesMap[K] & string>(
     raw: string,
-  ): ResolveMessageType<K, keyof MessagesMap[K]> | null {
+  ): Message<any, any> | null {
     try {
       const parsed = JSON.parse(raw);
       const { type } = parsed as { type: keyof MessagesMap[K] };
@@ -86,7 +144,7 @@ export default class MessageRouter<K extends keyof MessagesMap> {
         payload: any,
         timestamp: number,
         senderId: string,
-      ) => ResolveMessageType<K, typeof type>;
+      ) => ResolveMessageType<K, T>;
 
       return new MessageClass(
         parsed.payload,
@@ -99,15 +157,17 @@ export default class MessageRouter<K extends keyof MessagesMap> {
     }
   }
 
-  private handle(raw: string) {
-    const message = this.deserialize(raw);
+  private handle<T extends keyof MessagesMap[K] & string>(raw: string) {
+    const message = this.deserialize<T>(raw);
 
-    if (message) {
-      const type = message.type as keyof MessagesMap[K];
+    if (Message.isMessage(message)) {
+      const type = message.type as T;
       const handlers = this.handlers[type];
 
       if (handlers) {
-        handlers.forEach((handler) => handler(message));
+        handlers.forEach((handler) =>
+          handler(message as ResolveMessageType<K, T>),
+        );
       }
     }
   }

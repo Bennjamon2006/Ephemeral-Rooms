@@ -1,11 +1,15 @@
+import { Message } from "shared/messaging";
 import Client from "./Client.js";
 import ClientController from "./ClientController.js";
-import { MessagesMap } from "shared/messaging";
 import createContainer from "./container/index.js";
+import { ClientMessages } from "application/messaging";
 
-type ClientMessage = {
-  [K in keyof MessagesMap["client"]]: InstanceType<MessagesMap["client"][K]>;
-};
+type ResolveClientMessageType<T extends keyof ClientMessages> =
+  ClientMessages[T] extends new (...args: any[]) => infer R
+    ? R extends Message<any, any>
+      ? R
+      : never
+    : never;
 
 export default class ClientsHub {
   private readonly clients: Set<Client> = new Set();
@@ -34,7 +38,7 @@ export default class ClientsHub {
   }
 
   public broadcastMessage(
-    message: ClientMessage[keyof ClientMessage],
+    message: ResolveClientMessageType<keyof ClientMessages>,
     filter?: (client: Client) => boolean,
   ) {
     for (const client of this.clients) {
@@ -44,24 +48,24 @@ export default class ClientsHub {
     }
   }
 
-  public onMessage<K extends keyof ClientMessage>(
+  public onMessage<K extends keyof ClientMessages>(
     messageType: K,
-    handler: (message: ClientMessage[K], client: Client) => void,
+    handler: (message: ResolveClientMessageType<K>, client: Client) => void,
   ) {
     for (const client of this.clients) {
       client.on(messageType, (message) =>
-        handler(message as ClientMessage[K], client),
+        handler(message as ResolveClientMessageType<K>, client),
       );
     }
   }
 
-  public offMessage<K extends keyof ClientMessage>(
+  public offMessage<K extends keyof ClientMessages>(
     messageType: K,
-    handler: (message: ClientMessage[K], client: Client) => void,
+    handler: (message: ResolveClientMessageType<K>, client: Client) => void,
   ) {
     for (const client of this.clients) {
       client.off(messageType, (message) =>
-        handler(message as ClientMessage[K], client),
+        handler(message as ResolveClientMessageType<K>, client),
       );
     }
   }

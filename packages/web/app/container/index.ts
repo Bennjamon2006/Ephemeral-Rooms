@@ -19,11 +19,13 @@ export default async function createContainer(): Promise<Container> {
   await RedisMessageTransporter.setup(redisProvider);
 
   const systemMessageTransporter =
-    await RedisMessageTransporter.create("system");
+    await RedisMessageTransporter.create("system:internal");
   const systemMessageRouter = new MessageRouter(
     systemMessageTransporter,
     "system",
   );
+
+  await systemMessageRouter.start();
 
   const usersRepository = new RedisUsersRepository(redisProvider);
   const roomsRepository = new RedisRoomsRepository(redisProvider);
@@ -36,11 +38,11 @@ export default async function createContainer(): Promise<Container> {
   );
   const usersUseCases = new UsersUseCases(
     usersRepository,
-    roomsUseCases,
     roomContextFactory,
     systemMessageRouter,
   );
 
+  await roomsUseCases.init();
   await usersUseCases.init();
 
   return {

@@ -1,17 +1,14 @@
-import { MessageRouter } from "application/messaging";
-import {
-  MessageHandler,
-  messages,
-  MessagesMap,
-  ResolveMessageType,
-} from "shared/messaging";
+import { MessageRouter, ClientMessages } from "application/messaging";
+import { Message, MessageHandler } from "shared/messaging";
 
-type ClientMessage = MessagesMap["client"];
+type ResolveClientMessageType<T extends keyof ClientMessages> =
+  ClientMessages[T] extends new (...args: any[]) => infer R
+    ? R extends Message<any, any>
+      ? R
+      : never
+    : never;
 
-type ResolveClientMessageType<T extends keyof ClientMessage> =
-  ResolveMessageType<"client", T>;
-
-type ClientMessageHandler<T extends keyof ClientMessage> = MessageHandler<
+type ClientMessageHandler<T extends keyof ClientMessages> = MessageHandler<
   ResolveClientMessageType<T>
 >;
 
@@ -41,7 +38,7 @@ export default class Client {
     this.closeListeners.forEach((listener) => listener());
   }
 
-  public on<K extends keyof ClientMessage>(
+  public on<K extends keyof ClientMessages>(
     messageType: K,
     handler: ClientMessageHandler<K>,
   ) {
@@ -50,21 +47,21 @@ export default class Client {
     });
   }
 
-  public once<K extends keyof ClientMessage>(
+  public once<K extends keyof ClientMessages>(
     messageType: K,
     handler: ClientMessageHandler<K>,
   ) {
     this.router.once(messageType, handler);
   }
 
-  public off<K extends keyof ClientMessage>(
+  public off<K extends keyof ClientMessages>(
     messageType: K,
     handler: ClientMessageHandler<K>,
   ) {
     this.router.off(messageType, handler);
   }
 
-  public send(message: ResolveClientMessageType<keyof ClientMessage>) {
+  public send(message: ResolveClientMessageType<keyof ClientMessages>) {
     this.router.send(message);
   }
 

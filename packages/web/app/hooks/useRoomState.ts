@@ -11,12 +11,12 @@ export default function useRoomState(
   const [roomState, setRoomState] = useState(initialRoomState);
   const dispatch = useDispatch();
 
-  useMessage("roomUpdate", (message) => {
+  useMessage("roomDataUpdated", (message) => {
     setRoomState(message.payload.roomState);
   });
 
   useEffect(() => {
-    dispatch(new messages.client.watchRoomData({ roomCode }));
+    dispatch(new messages.commands.watchRoomData({ roomCode }));
   }, [dispatch, roomCode]);
 
   return roomState;
