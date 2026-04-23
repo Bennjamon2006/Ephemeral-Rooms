@@ -6,6 +6,7 @@ import AuthMessage from "./AuthMessage.js";
 import UserJoinedMessage from "./UserJoinedMessage.js";
 import UserCreatedMessage from "./UserCreatedMessage.js";
 import WatchUserCreatedMessage from "./WatchUserCreatedMessage.js";
+import UserLeftMessage from "./UserLeftMessage.js";
 
 export const messages = {
   system: {
@@ -19,6 +20,7 @@ export const messages = {
     userJoined: UserJoinedMessage,
     watchUserCreated: WatchUserCreatedMessage,
     userCreated: UserCreatedMessage,
+    userLeft: UserLeftMessage,
   },
 };
 

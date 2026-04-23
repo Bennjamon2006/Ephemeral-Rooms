@@ -7,4 +7,5 @@ export default interface UsersRepository {
   removeUserFromRoom(roomCode: string, userId: string): Promise<void>;
   setUserOnline(roomCode: string, userId: string): Promise<void>;
   getOnlineRoomUsers(roomCode: string): Promise<string[]>;
+  setUserOffline(roomCode: string, userId: string): Promise<void>;
 }

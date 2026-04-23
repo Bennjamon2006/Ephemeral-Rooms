@@ -39,6 +39,8 @@ export default async function RoomPage({ params }: Props) {
   const users = await usersService.getUsersInRoom(code);
   const onlineUsers = await usersService.getOnlineUsersInRoom(code);
 
+  console.log({ users, onlineUsers });
+
   return (
     <RoomClient
       userId={userId}

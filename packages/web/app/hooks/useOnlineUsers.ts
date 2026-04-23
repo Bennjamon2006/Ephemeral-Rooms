@@ -18,5 +18,13 @@ export default function useOnlineUsers(initialOnlineUsers: string[]) {
     }
   });
 
+  useMessage("userLeft", (message) => {
+    const { userId } = message.payload;
+
+    setOnlineUsers((prevOnlineUsers) =>
+      prevOnlineUsers.filter((id) => id !== userId),
+    );
+  });
+
   return onlineUsers;
 }

@@ -8,6 +8,12 @@ export default class ClientFactory {
     const transporter = new WSServerMessageTransporter(ws);
     const router = new MessageRouter(transporter, "client");
 
-    return new Client(router, roomCode);
+    const client = new Client(router, roomCode);
+
+    ws.on("close", () => {
+      client.stop();
+    });
+
+    return client;
   }
 }

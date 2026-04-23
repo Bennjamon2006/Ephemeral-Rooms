@@ -23,8 +23,10 @@ export default function RoomClient({
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log("Dispatching");
+
     dispatch(new messages.client.auth({ userId }));
-  }, [userId, roomCode]);
+  }, [userId, roomCode, dispatch]);
 
   return (
     <div className="h-screen flex flex-col bg-gray-950 text-white">

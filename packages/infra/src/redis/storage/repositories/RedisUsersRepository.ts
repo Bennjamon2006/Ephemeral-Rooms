@@ -65,4 +65,11 @@ export default class RedisUsersRepository
 
     return client.sMembers(key);
   }
+
+  public async setUserOffline(roomCode: string, userId: string): Promise<void> {
+    const key = `room:${roomCode}:onlineUsers`;
+    const client = await this.getClient();
+
+    await client.sRem(key, userId);
+  }
 }

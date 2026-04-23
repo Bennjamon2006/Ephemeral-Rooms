@@ -65,4 +65,15 @@ export default class UsersUseCases {
   public async getOnlineUsersInRoom(roomCode: string): Promise<string[]> {
     return this.usersRepository.getOnlineRoomUsers(roomCode);
   }
+
+  public async setUserOffline(roomCode: string, userId: string): Promise<void> {
+    await this.usersRepository.setUserOffline(roomCode, userId);
+
+    // Efecto secundario, no se espera
+    this.getOnlineUsersInRoom(roomCode).then((onlineUsers) => {
+      if (onlineUsers.length === 0) {
+        this.rooms.updateRoom(roomCode, true); // Marcar la sala como inactiva si no hay usuarios en línea
+      }
+    });
+  }
 }

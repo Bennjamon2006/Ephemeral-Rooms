@@ -52,5 +52,21 @@ export default class ClientController {
 
       this.cleanupFunctions.push(cleanup);
     });
+
+    this.client.onClose(async () => {
+      this.cleanupFunctions.forEach((fn) => fn());
+
+      const userId = this.client.userId;
+
+      if (userId) {
+        await this.usersUseCases.setUserOffline(this.client.roomCode, userId);
+
+        hub.broadcastMessage(
+          new messages.client.userLeft({ userId }),
+          (client) =>
+            client.roomCode === this.client.roomCode && client !== this.client,
+        );
+      }
+    });
   }
 }

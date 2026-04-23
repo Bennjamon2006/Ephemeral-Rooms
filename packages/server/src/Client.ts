@@ -16,6 +16,8 @@ type ClientMessageHandler<T extends keyof ClientMessage> = MessageHandler<
 >;
 
 export default class Client {
+  private readonly closeListeners: (() => void)[] = [];
+
   constructor(
     private readonly router: MessageRouter<"client">,
     public readonly roomCode: string,
@@ -36,6 +38,7 @@ export default class Client {
 
   public stop() {
     this.router.stop();
+    this.closeListeners.forEach((listener) => listener());
   }
 
   public on<K extends keyof ClientMessage>(
@@ -63,5 +66,9 @@ export default class Client {
 
   public send(message: ResolveClientMessageType<keyof ClientMessage>) {
     this.router.send(message);
+  }
+
+  public onClose(listener: () => void) {
+    this.closeListeners.push(listener);
   }
 }
