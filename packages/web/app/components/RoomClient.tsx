@@ -4,6 +4,7 @@ import type { User, Message } from "shared/models";
 import useDispatch from "../hooks/useDispatch";
 import { useEffect } from "react";
 import { messages } from "shared/messaging";
+import UsersList from "./UsersList";
 
 type Props = {
   userId: string;
@@ -38,19 +39,7 @@ export default function RoomClient({
       {/* BODY */}
       <div className="flex flex-1 overflow-hidden">
         {/* USERS SIDEBAR */}
-        <aside className="w-56 border-r border-gray-800 bg-gray-900 p-3">
-          <h2 className="text-sm uppercase tracking-wider text-gray-400 mb-3">
-            Usuarios
-          </h2>
-
-          <ul className="space-y-2">
-            {users.map((u, i) => (
-              <li key={i} className="px-3 py-2 rounded bg-gray-800 text-sm">
-                {u.name}
-              </li>
-            ))}
-          </ul>
-        </aside>
+        <UsersList initialUsers={users} initialOnlineUsers={onlineUsers} />
 
         {/* CHAT AREA */}
         <main className="flex-1 flex flex-col bg-gray-950">
