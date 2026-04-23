@@ -8,4 +8,5 @@ export default interface UsersRepository {
   setUserOnline(roomCode: string, userId: string): Promise<void>;
   getOnlineRoomUsers(roomCode: string): Promise<string[]>;
   setUserOffline(roomCode: string, userId: string): Promise<void>;
+  setTTLs(roomCode: string, expiresAt: number): Promise<void>;
 }

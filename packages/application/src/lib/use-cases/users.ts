@@ -2,14 +2,29 @@ import { randomUUID } from "crypto";
 import type { User } from "shared/models";
 import type { UsersRepository } from "shared/repositories";
 import RoomsUseCases from "./rooms.js";
-import RoomContextFactory from "../interfaces/RoomContextFactory.js";
+import RoomContextFactory from "@/lib/interfaces/RoomContextFactory.js";
+import MessageRouter from "@/lib/messaging/MessageRouter.js";
 
 export default class UsersUseCases {
   constructor(
-    private usersRepository: UsersRepository,
-    private rooms: RoomsUseCases,
-    private roomContextFactory: RoomContextFactory,
+    private readonly usersRepository: UsersRepository,
+    private readonly rooms: RoomsUseCases,
+    private readonly roomContextFactory: RoomContextFactory,
+    private readonly systemMessageRouter: MessageRouter<"system">,
   ) {}
+
+  public async init(): Promise<void> {
+    this.systemMessageRouter.on("roomDataUpdate", async (message) => {
+      if (!message.payload.roomCode) {
+        console.warn("Received roomDataUpdate without roomCode");
+        return;
+      }
+
+      const { roomCode, roomState } = message.payload;
+
+      await this.usersRepository.setTTLs(roomCode, roomState.expiresAt);
+    });
+  }
 
   public async getUsersInRoom(roomCode: string): Promise<User[]> {
     return this.usersRepository.getRoomUsers(roomCode);
@@ -76,4 +91,9 @@ export default class UsersUseCases {
       }
     });
   }
+
+  public async syncUsersOnRoom(
+    roomCode: string,
+    expiresAt: Date,
+  ): Promise<void> {}
 }

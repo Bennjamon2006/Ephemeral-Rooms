@@ -72,4 +72,29 @@ export default class RedisUsersRepository
 
     await client.sRem(key, userId);
   }
+
+  public async setTTLs(roomCode: string, expiresAt: number): Promise<void> {
+    const usersKey = `room:${roomCode}:users`;
+    const onlineUsersKey = `room:${roomCode}:onlineUsers`;
+    const client = await this.getClient();
+
+    const ttlSeconds = Math.max(Math.floor((expiresAt - Date.now()) / 1000), 0);
+
+    const [usersTTLResult, onlineUsersTTLResult] = await Promise.all([
+      client.expire(usersKey, ttlSeconds),
+      client.expire(onlineUsersKey, ttlSeconds),
+    ]);
+
+    if (usersTTLResult === 0) {
+      console.warn(
+        `Failed to set TTL for users key "${usersKey}". Key may not exist.`,
+      );
+    }
+
+    if (onlineUsersTTLResult === 0) {
+      console.warn(
+        `Failed to set TTL for online users key "${onlineUsersKey}". Key may not exist.`,
+      );
+    }
+  }
 }

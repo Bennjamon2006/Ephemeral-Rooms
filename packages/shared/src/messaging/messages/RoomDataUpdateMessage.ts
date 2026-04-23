@@ -3,6 +3,7 @@ import { RoomState } from "../../models/RoomState.js";
 
 type Payload = {
   roomState: RoomState;
+  roomCode?: string; // Optional: Only included in system messages, not in client messages
 };
 
 export default class RoomDataUpdateMessage extends Message<

@@ -6,6 +6,7 @@ import {
   RedisMessageTransporter,
 } from "infra/redis";
 import getRedisProvider from "./redis";
+import { MessageRouter } from "application/messaging";
 
 type Container = {
   usersUseCases: UsersUseCases;
@@ -17,16 +18,30 @@ export default async function createContainer(): Promise<Container> {
 
   await RedisMessageTransporter.setup(redisProvider);
 
+  const systemMessageTransporter =
+    await RedisMessageTransporter.create("system");
+  const systemMessageRouter = new MessageRouter(
+    systemMessageTransporter,
+    "system",
+  );
+
   const usersRepository = new RedisUsersRepository(redisProvider);
   const roomsRepository = new RedisRoomsRepository(redisProvider);
   const roomContextFactory = new RedisRoomContextFactory(redisProvider);
 
-  const roomsUseCases = new RoomsUseCases(roomsRepository, roomContextFactory);
+  const roomsUseCases = new RoomsUseCases(
+    roomsRepository,
+    roomContextFactory,
+    systemMessageRouter,
+  );
   const usersUseCases = new UsersUseCases(
     usersRepository,
     roomsUseCases,
     roomContextFactory,
+    systemMessageRouter,
   );
+
+  await usersUseCases.init();
 
   return {
     usersUseCases,

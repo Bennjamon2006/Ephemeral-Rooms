@@ -2,7 +2,9 @@ import { RoomState } from "shared/models";
 import { RoomsRepository } from "shared/repositories";
 import generateCode from "@/helpers/generateCode.js";
 import calculateExpiresAt from "@/helpers/calculateExpiresAt.js";
-import { RoomContextFactory } from "../interfaces/index.js";
+import { RoomContextFactory } from "@/lib/interfaces/index.js";
+import MessageRouter from "@/lib/messaging/MessageRouter.js";
+import { messages } from "shared/messaging";
 
 export default class RoomsUseCases {
   private readonly ROOM_CODE_LENGTH = 6;
@@ -10,6 +12,7 @@ export default class RoomsUseCases {
   constructor(
     private readonly roomsRepository: RoomsRepository,
     private readonly roomContextFactory: RoomContextFactory,
+    private readonly systemMessageRouter: MessageRouter<"system">,
   ) {}
 
   public async getRoomData(roomCode: string): Promise<RoomState | null> {
@@ -43,6 +46,10 @@ export default class RoomsUseCases {
     };
 
     await this.roomsRepository.setRoomState(roomCode, roomState);
+
+    this.systemMessageRouter.send(
+      new messages.system.roomDataUpdate({ roomCode, roomState }),
+    );
 
     const roomContext = await this.roomContextFactory.create(roomCode);
 
