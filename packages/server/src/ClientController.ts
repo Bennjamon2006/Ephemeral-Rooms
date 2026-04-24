@@ -53,6 +53,24 @@ export default class ClientController {
       this.cleanupFunctions.push(cleanup);
     });
 
+    this.client.on("syncUsers", async () => {
+      const users = await this.usersUseCases.getUsersInRoom(
+        this.client.roomCode,
+      );
+
+      this.client.send(new messages.events.syncUsersResult({ users }));
+    });
+
+    this.client.on("syncOnlineUsers", async () => {
+      const onlineUsers = await this.usersUseCases.getOnlineUsersInRoom(
+        this.client.roomCode,
+      );
+
+      this.client.send(
+        new messages.events.syncOnlineUsersResult({ onlineUsers }),
+      );
+    });
+
     this.client.onClose(async () => {
       this.cleanupFunctions.forEach((fn) => fn());
 

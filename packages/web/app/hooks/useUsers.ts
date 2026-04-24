@@ -8,6 +8,11 @@ export default function useUsers(initialUsers: User[]) {
   const [users, setUsers] = useState(initialUsers);
   const dispatch = useDispatch();
 
+  useMessage("syncUsersResult", (message) => {
+    const { users } = message.payload;
+    setUsers(users);
+  });
+
   useMessage("userCreated", (message) => {
     const { user } = message.payload;
 
@@ -16,6 +21,7 @@ export default function useUsers(initialUsers: User[]) {
 
   useEffect(() => {
     dispatch(new messages.commands.watchUserCreated());
+    dispatch(new messages.commands.syncUsers());
   }, [dispatch]);
 
   return users;

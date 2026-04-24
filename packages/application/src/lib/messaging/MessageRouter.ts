@@ -20,8 +20,17 @@ export type SystemMessages = MapMessageDefinitions<
 >;
 
 export type ClientMessages = MapMessageDefinitions<
-  "watchUserCreated" | "watchRoomData" | "auth",
-  "userJoined" | "userLeft" | "userCreated" | "roomDataUpdated"
+  | "watchUserCreated"
+  | "watchRoomData"
+  | "auth"
+  | "syncOnlineUsers"
+  | "syncUsers",
+  | "userJoined"
+  | "userLeft"
+  | "userCreated"
+  | "roomDataUpdated"
+  | "syncOnlineUsersResult"
+  | "syncUsersResult"
 >;
 
 const scopes: {
@@ -43,6 +52,10 @@ const scopes: {
     watchRoomData: messages.commands.watchRoomData,
     watchUserCreated: messages.commands.watchUserCreated,
     auth: messages.commands.auth,
+    syncOnlineUsers: messages.commands.syncOnlineUsers,
+    syncUsers: messages.commands.syncUsers,
+    syncOnlineUsersResult: messages.events.syncOnlineUsersResult,
+    syncUsersResult: messages.events.syncUsersResult,
   },
 };
 
