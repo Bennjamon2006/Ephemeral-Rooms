@@ -1,4 +1,4 @@
-import type { User } from "../models";
+import type { User } from "../models/index.js";
 
 export default interface UsersRepository {
   getUser(roomCode: string, userId: string): Promise<User | null>;

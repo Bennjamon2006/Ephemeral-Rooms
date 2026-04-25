@@ -1,4 +1,4 @@
-import type { RoomState } from "../models";
+import type { RoomState } from "../models/index.js";
 
 export default interface RoomsRepository {
   getRoomState(roomCode: string): Promise<RoomState | null>;

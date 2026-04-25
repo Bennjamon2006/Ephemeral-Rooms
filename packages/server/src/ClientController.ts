@@ -1,6 +1,6 @@
 import { messages } from "shared/messaging";
-import Client from "./Client";
-import ClientsHub from "./ClientsHub";
+import Client from "./Client.js";
+import ClientsHub from "./ClientsHub.js";
 import { RoomsUseCases, UsersUseCases } from "application/use-cases";
 
 export default class ClientController {

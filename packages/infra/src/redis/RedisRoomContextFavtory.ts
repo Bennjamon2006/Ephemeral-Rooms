@@ -1,8 +1,8 @@
 import { RoomContext } from "application/classes";
 import { RoomContextFactory } from "application/interfaces";
 import { MessageRouter } from "application/messaging";
-import RedisMessageTransporter from "./messaging/RedisMessageTransporter";
-import RedisConsumer from "./RedisConsumer";
+import RedisMessageTransporter from "./messaging/RedisMessageTransporter.js";
+import RedisConsumer from "./RedisConsumer.js";
 
 export default class RedisRoomContextFactory
   extends RedisConsumer

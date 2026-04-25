@@ -1,3 +1,3 @@
-import RoomContext from "./RoomContext";
+import RoomContext from "./RoomContext.js";
 
 export { RoomContext };

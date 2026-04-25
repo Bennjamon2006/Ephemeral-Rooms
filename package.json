@@ -9,7 +9,7 @@
     "dev:runtime": "concurrently --names \"web,server\" \"npm run dev --workspace web\" \"npm run dev --workspace server\"",
     "dev:libs": "concurrently --names \"shared,infra,application\" \"npm run dev --workspace shared\" \"npm run dev --workspace infra\" \"npm run dev --workspace application\"",
     "dev": "concurrently --names \"libs,runtime\" \"npm run dev:libs\" \"npm run dev:runtime\"",
-    "build": "npm run build --workspaces",
+    "build": "npm run build --workspace shared && npm run build --workspace application && npm run build --workspace infra && npm run build --workspace web && npm run build --workspace server",
     "start": "concurrently --names \"web,server\" \"npm run start --workspace web\" \"npm run start --workspace server\"",
     "lint": "npm run lint --workspaces",
     "commit": "cz"

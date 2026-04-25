@@ -5,7 +5,7 @@ import {
   RedisRoomContextFactory,
   RedisMessageTransporter,
 } from "infra/redis";
-import getRedisProvider from "./redis";
+import getRedisProvider from "./redis.js";
 import { MessageRouter } from "application/messaging";
 
 type Container = {

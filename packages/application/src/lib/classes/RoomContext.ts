@@ -1,4 +1,4 @@
-import { MessageRouter, SystemMessages } from "@/lib/messaging";
+import { MessageRouter, SystemMessages } from "@/lib/messaging/index.js";
 import { RoomState, User } from "shared/models";
 import { messages } from "shared/messaging";
 
