@@ -1,6 +1,6 @@
-import Message from "../Message.js";
+import Envelope from "../Envelope.js";
 
-export default class WatchUserCreatedMessage extends Message<
+export default class WatchUserCreatedEnvelope extends Envelope<
   "watchUserCreated",
   {}
 > {

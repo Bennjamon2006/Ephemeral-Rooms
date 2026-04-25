@@ -1,10 +1,10 @@
-import Message from "../Message.js";
+import Envelope from "../Envelope.js";
 
 type Payload = {
   userId: string;
 };
 
-export default class AuthMessage extends Message<"auth", Payload> {
+export default class AuthEnvelope extends Envelope<"auth", Payload> {
   constructor(payload: Payload) {
     super("auth", payload);
   }

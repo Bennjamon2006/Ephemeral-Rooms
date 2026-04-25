@@ -1,11 +1,11 @@
-import Message from "../Message.js";
+import Envelope from "../Envelope.js";
 import type { User } from "@/models";
 
 type Payload = {
   user: User;
 };
 
-export default class UserCreatedMessage extends Message<
+export default class UserCreatedEnvelope extends Envelope<
   "userCreated",
   Payload
 > {

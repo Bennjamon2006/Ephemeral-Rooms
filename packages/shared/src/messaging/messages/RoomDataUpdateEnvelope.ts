@@ -1,4 +1,4 @@
-import Message from "../Message.js";
+import Envelope from "../Envelope.js";
 import { RoomState } from "../../models/RoomState.js";
 
 type Payload = {
@@ -6,7 +6,7 @@ type Payload = {
   roomCode?: string; // Optional: Only included in system messages, not in client messages
 };
 
-export default class RoomDataUpdatedMessage extends Message<
+export default class RoomDataUpdatedEnvelope extends Envelope<
   "roomDataUpdated",
   Payload
 > {

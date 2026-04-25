@@ -2,7 +2,7 @@ import {
   messages,
   MessageHandler,
   MessageTransporter,
-  Message,
+  Envelope,
 } from "shared/messaging";
 
 type MapMessageDefinitions<
@@ -72,7 +72,7 @@ type ResolveMessageType<
   S extends keyof MessagesMap,
   T extends keyof MessagesMap[S],
 > = MessagesMap[S][T] extends new (...args: any[]) => infer R
-  ? R extends Message<any, any>
+  ? R extends Envelope<any, any>
     ? R
     : never
   : never;
@@ -125,7 +125,7 @@ export default class MessageRouter<K extends keyof MessagesMap> {
   }
 
   public send(message: ResolveMessageType<K, keyof MessagesMap[K]>) {
-    const msg = message as Message<any, any>;
+    const msg = message as Envelope<any, any>;
 
     this.transporter.sendMessage(msg.serialize());
   }
@@ -144,7 +144,7 @@ export default class MessageRouter<K extends keyof MessagesMap> {
 
   private deserialize<T extends keyof MessagesMap[K] & string>(
     raw: string,
-  ): Message<any, any> | null {
+  ): Envelope<any, any> | null {
     try {
       const parsed = JSON.parse(raw);
       const { type } = parsed as { type: keyof MessagesMap[K] };
@@ -173,7 +173,7 @@ export default class MessageRouter<K extends keyof MessagesMap> {
   private handle<T extends keyof MessagesMap[K] & string>(raw: string) {
     const message = this.deserialize<T>(raw);
 
-    if (Message.isMessage(message)) {
+    if (Envelope.isMessage(message)) {
       const type = message.type as T;
       const handlers = this.handlers[type];
 

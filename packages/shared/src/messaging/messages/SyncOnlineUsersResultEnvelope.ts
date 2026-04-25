@@ -1,10 +1,10 @@
-import Message from "../Message.js";
+import Envelope from "../Envelope.js";
 
 type Payload = {
   onlineUsers: string[];
 };
 
-export default class SyncOnlineUsersResultMessage extends Message<
+export default class SyncOnlineUsersResultEnvelope extends Envelope<
   "syncOnlineUsersResult",
   Payload
 > {

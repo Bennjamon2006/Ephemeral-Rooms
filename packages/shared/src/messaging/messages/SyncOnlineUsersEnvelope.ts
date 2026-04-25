@@ -1,6 +1,6 @@
-import Message from "../Message.js";
+import Envelope from "../Envelope.js";
 
-export default class SyncOnlineUsersMessage extends Message<
+export default class SyncOnlineUsersEnvelope extends Envelope<
   "syncOnlineUsers",
   {}
 > {

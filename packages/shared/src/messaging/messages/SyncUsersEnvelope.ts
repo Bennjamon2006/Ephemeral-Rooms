@@ -1,6 +1,6 @@
-import Message from "../Message.js";
+import Envelope from "../Envelope.js";
 
-export default class SyncUsersMessage extends Message<"syncUsers", {}> {
+export default class SyncUsersEnvelope extends Envelope<"syncUsers", {}> {
   constructor(payload: {} = {}) {
     super("syncUsers", payload);
   }

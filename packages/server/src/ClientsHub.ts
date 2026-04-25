@@ -1,4 +1,4 @@
-import { Message } from "shared/messaging";
+import { Envelope } from "shared/messaging";
 import Client from "./Client.js";
 import ClientController from "./ClientController.js";
 import createContainer from "./container/index.js";
@@ -6,7 +6,7 @@ import { ClientMessages } from "application/messaging";
 
 type ResolveClientMessageType<T extends keyof ClientMessages> =
   ClientMessages[T] extends new (...args: any[]) => infer R
-    ? R extends Message<any, any>
+    ? R extends Envelope<any, any>
       ? R
       : never
     : never;

@@ -1,11 +1,14 @@
-import Message from "../Message.js";
+import Envelope from "../Envelope.js";
 
 type Payload = {
   roomCode: string;
   empty: boolean;
 };
 
-export default class UpdateRoomMessage extends Message<"updateRoom", Payload> {
+export default class UpdateRoomEnvelope extends Envelope<
+  "updateRoom",
+  Payload
+> {
   constructor(payload: Payload) {
     super("updateRoom", payload);
   }

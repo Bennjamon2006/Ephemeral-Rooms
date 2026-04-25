@@ -1,31 +1,31 @@
-import Message from "../Message.js";
-import RoomDataUpdatedMessage from "./RoomDataUpdateMessage.js";
-import WatchRoomDataMessage from "./WatchRoomDataMessage.js";
-import AuthMessage from "./AuthMessage.js";
-import UserJoinedMessage from "./UserJoinedMessage.js";
-import UserCreatedMessage from "./UserCreatedMessage.js";
-import WatchUserCreatedMessage from "./WatchUserCreatedMessage.js";
-import UserLeftMessage from "./UserLeftMessage.js";
-import UpdateRoomMessage from "./UpdateRoomMessage.js";
-import SyncUsersMessage from "./SyncUsersMessage.js";
-import SyncOnlineUsersMessage from "./SyncOnlineUsersMessage.js";
-import SyncOnlineUsersResultMessage from "./SyncOnlineUsersResultMessage.js";
-import SyncUsersResultMessage from "./SyncUsersResultMessage.js";
+import Envelope from "../Envelope.js";
+import RoomDataUpdatedEnvelope from "./RoomDataUpdateEnvelope.js";
+import WatchRoomDataEnvelope from "./WatchRoomDataEnvelope.js";
+import AuthEnvelope from "./AuthEnvelope.js";
+import UserJoinedEnvelope from "./UserJoinedEnvelope.js";
+import UserCreatedEnvelope from "./UserCreatedEnvelope.js";
+import WatchUserCreatedEnvelope from "./WatchUserCreatedEnvelope.js";
+import UserLeftEnvelope from "./UserLeftEnvelope.js";
+import UpdateRoomEnvelope from "./UpdateRoomEnvelope.js";
+import SyncUsersEnvelope from "./SyncUsersEnvelope.js";
+import SyncOnlineUsersEnvelope from "./SyncOnlineUsersEnvelope.js";
+import SyncOnlineUsersResultEnvelope from "./SyncOnlineUsersResultEnvelope.js";
+import SyncUsersResultEnvelope from "./SyncUsersResultEnvelope.js";
 
 export const commands = {
-  watchRoomData: WatchRoomDataMessage,
-  watchUserCreated: WatchUserCreatedMessage,
-  auth: AuthMessage,
-  updateRoom: UpdateRoomMessage,
-  syncOnlineUsers: SyncOnlineUsersMessage,
-  syncUsers: SyncUsersMessage,
+  watchRoomData: WatchRoomDataEnvelope,
+  watchUserCreated: WatchUserCreatedEnvelope,
+  auth: AuthEnvelope,
+  updateRoom: UpdateRoomEnvelope,
+  syncOnlineUsers: SyncOnlineUsersEnvelope,
+  syncUsers: SyncUsersEnvelope,
 } as const;
 
 export const events = {
-  roomDataUpdated: RoomDataUpdatedMessage,
-  userJoined: UserJoinedMessage,
-  userCreated: UserCreatedMessage,
-  userLeft: UserLeftMessage,
-  syncOnlineUsersResult: SyncOnlineUsersResultMessage,
-  syncUsersResult: SyncUsersResultMessage,
+  roomDataUpdated: RoomDataUpdatedEnvelope,
+  userJoined: UserJoinedEnvelope,
+  userCreated: UserCreatedEnvelope,
+  userLeft: UserLeftEnvelope,
+  syncOnlineUsersResult: SyncOnlineUsersResultEnvelope,
+  syncUsersResult: SyncUsersResultEnvelope,
 } as const;

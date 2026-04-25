@@ -1,6 +1,6 @@
-export default abstract class Message<T extends string, P> {
-  public static isMessage(obj: any): obj is Message<string, any> {
-    return obj instanceof Message;
+export default abstract class Envelope<T extends string, P> {
+  public static isMessage(obj: any): obj is Envelope<string, any> {
+    return obj instanceof Envelope;
   }
 
   constructor(
@@ -30,6 +30,6 @@ export default abstract class Message<T extends string, P> {
   abstract validate(): boolean;
 }
 
-export type MessageHandler<T extends Message<string, any>> = (
+export type MessageHandler<T extends Envelope<string, any>> = (
   message: T,
 ) => void;

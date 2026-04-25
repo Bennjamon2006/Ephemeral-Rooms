@@ -1,9 +1,9 @@
 import { MessageRouter, ClientMessages } from "application/messaging";
-import { Message, MessageHandler } from "shared/messaging";
+import { Envelope, MessageHandler } from "shared/messaging";
 
 type ResolveClientMessageType<T extends keyof ClientMessages> =
   ClientMessages[T] extends new (...args: any[]) => infer R
-    ? R extends Message<any, any>
+    ? R extends Envelope<any, any>
       ? R
       : never
     : never;
@@ -43,7 +43,7 @@ export default class Client {
     handler: ClientMessageHandler<K>,
   ) {
     this.router.on(messageType, (message) => {
-      handler(message);
+      handler(message as ResolveClientMessageType<K>);
     });
   }
 
@@ -51,14 +51,14 @@ export default class Client {
     messageType: K,
     handler: ClientMessageHandler<K>,
   ) {
-    this.router.once(messageType, handler);
+    this.router.once(messageType, handler as MessageHandler<any>);
   }
 
   public off<K extends keyof ClientMessages>(
     messageType: K,
     handler: ClientMessageHandler<K>,
   ) {
-    this.router.off(messageType, handler);
+    this.router.off(messageType, handler as MessageHandler<any>);
   }
 
   public send(message: ResolveClientMessageType<keyof ClientMessages>) {

@@ -1,12 +1,15 @@
-import Message from "../Message.js";
+import Envelope from "../Envelope.js";
 
 type Payload = {
   userId: string;
 };
 
-export default class UserLeftMessage extends Message<"userLeft", Payload> {
+export default class UserJoinedEnvelope extends Envelope<
+  "userJoined",
+  Payload
+> {
   constructor(payload: Payload) {
-    super("userLeft", payload);
+    super("userJoined", payload);
   }
 
   validate(): boolean {
