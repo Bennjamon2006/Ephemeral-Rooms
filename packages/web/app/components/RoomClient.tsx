@@ -5,6 +5,7 @@ import useDispatch from "../hooks/useDispatch";
 import { useEffect } from "react";
 import { messages } from "shared/messaging";
 import UsersList from "./UsersList";
+import MessageInput from "./MessageInput";
 
 type Props = {
   userId: string;
@@ -54,12 +55,11 @@ export default function RoomClient({
           </div>
 
           {/* input placeholder */}
-          <div className="border-t border-gray-800 p-4">
-            <input
-              className="w-full bg-gray-900 border border-gray-800 rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Escribe un mensaje..."
-            />
-          </div>
+          <MessageInput
+            onSend={(message) => {
+              alert(`Send message: ${message}`);
+            }}
+          />
         </main>
       </div>
     </div>
