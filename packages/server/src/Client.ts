@@ -14,6 +14,7 @@ type ClientMessageHandler<T extends keyof ClientMessages> = MessageHandler<
 
 export default class Client {
   private readonly closeListeners: (() => void)[] = [];
+  private closed = false;
 
   constructor(
     private readonly router: MessageRouter<"client">,
@@ -34,6 +35,8 @@ export default class Client {
   }
 
   public stop() {
+    if (this.closed) return;
+    this.closed = true;
     this.router.stop();
     this.closeListeners.forEach((listener) => listener());
   }

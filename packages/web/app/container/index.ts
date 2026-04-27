@@ -19,7 +19,15 @@ type Container = {
   messagesUseCases: MessagesUseCases;
 };
 
+const globalWithContainer = globalThis as typeof globalThis & {
+  container?: Container;
+};
+
 export default async function createContainer(): Promise<Container> {
+  if (globalWithContainer.container) {
+    return globalWithContainer.container;
+  }
+
   const redisProvider = await getRedisProvider();
 
   await RedisMessageTransporter.setup(redisProvider);
@@ -50,9 +58,13 @@ export default async function createContainer(): Promise<Container> {
   );
   const messagesUseCases = new MessagesUseCases(messagesRepository);
 
-  return {
+  const container = {
     usersUseCases,
     roomsUseCases,
     messagesUseCases,
   };
+
+  globalWithContainer.container = container;
+
+  return container;
 }

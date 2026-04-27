@@ -21,7 +21,7 @@ export default class UsersUseCases {
 
       const { roomCode, roomState } = message.payload;
 
-      await this.usersRepository.setTTLs(roomCode, roomState.expiresAt);
+      await this.syncUsersOnRoom(roomCode, roomState.expiresAt);
     });
   }
 

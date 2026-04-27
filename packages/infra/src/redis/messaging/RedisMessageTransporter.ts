@@ -34,6 +34,7 @@ export default class RedisMessageTransporter
   private subClient?: RedisClientType;
   private listeners: Set<(raw: string) => void> = new Set();
   private queue: string[] = [];
+  private prepared: boolean = false;
 
   private constructor(
     provider: RedisProvider,
@@ -43,6 +44,8 @@ export default class RedisMessageTransporter
   }
 
   public async prepare(): Promise<void> {
+    if (this.prepared) return;
+
     try {
       this.pubClient = await this.getClient();
       this.subClient = this.pubClient.duplicate();
@@ -55,6 +58,7 @@ export default class RedisMessageTransporter
 
       this.queue.forEach((msg) => this.sendMessage(msg));
       this.queue = [];
+      this.prepared = true;
     } catch (error) {
       console.error("Error preparing RedisMessageTransporter:", error);
       throw error;
@@ -78,8 +82,6 @@ export default class RedisMessageTransporter
 
   public sendMessage(raw: string): void {
     if (this.pubClient) {
-      console.log({ raw, channel: this.channel });
-
       this.pubClient.publish(this.channel, raw);
     } else {
       this.queue.push(raw);
