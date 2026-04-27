@@ -6,23 +6,33 @@ import { useEffect } from "react";
 import { messages } from "shared/messaging";
 import UsersList from "./UsersList";
 import MessageInput from "./MessageInput";
+import MessagesList from "./MessagesList";
+import useOnlineUsers from "../hooks/useOnlineUsers";
+import useUsers from "../hooks/useUsers";
 
 type Props = {
   userId: string;
   roomCode: string;
-  users: User[];
+  initialUsers: User[];
   messages: Message[];
-  onlineUsers: string[];
+  initialOnlineUsers: string[];
 };
 
 export default function RoomClient({
   userId,
   roomCode,
-  users,
+  initialUsers,
   messages: roomMessages,
-  onlineUsers,
+  initialOnlineUsers,
 }: Props) {
   const dispatch = useDispatch();
+
+  const users = useUsers(initialUsers);
+  const onlineUsers = useOnlineUsers(initialOnlineUsers);
+
+  const activeUsers = initialOnlineUsers
+    .map((userId) => users.find((u) => u.id === userId))
+    .filter((u): u is User => u !== undefined);
 
   useEffect(() => {
     console.log("Dispatching");
@@ -40,26 +50,15 @@ export default function RoomClient({
       {/* BODY */}
       <div className="flex flex-1 overflow-hidden">
         {/* USERS SIDEBAR */}
-        <UsersList initialUsers={users} initialOnlineUsers={onlineUsers} />
+        <UsersList activeUsers={activeUsers} />
 
         {/* CHAT AREA */}
         <main className="flex-1 flex flex-col bg-gray-950">
           {/* messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-3">
-            {roomMessages.map((m, i) => (
-              <div key={i} className="max-w-xl px-4 py-2 rounded bg-gray-800">
-                <span className="text-indigo-400 font-medium">{m.userId}</span>:{" "}
-                {m.content}
-              </div>
-            ))}
-          </div>
+          <MessagesList messages={roomMessages} users={users} />
 
           {/* input placeholder */}
-          <MessageInput
-            onSend={(message) => {
-              alert(`Send message: ${message}`);
-            }}
-          />
+          <MessageInput />
         </main>
       </div>
     </div>

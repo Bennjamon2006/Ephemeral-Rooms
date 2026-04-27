@@ -78,6 +78,8 @@ export default class RedisMessageTransporter
 
   public sendMessage(raw: string): void {
     if (this.pubClient) {
+      console.log({ raw, channel: this.channel });
+
       this.pubClient.publish(this.channel, raw);
     } else {
       this.queue.push(raw);

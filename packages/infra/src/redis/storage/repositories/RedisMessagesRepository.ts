@@ -1,0 +1,64 @@
+import type { Message } from "shared/models";
+import { MessagesRepository } from "shared/repositories";
+import RedisConsumer from "../../RedisConsumer.js";
+
+export default class RedisMessagesRepository
+  extends RedisConsumer
+  implements MessagesRepository
+{
+  private safeParseMessage(messageJson: string | null): Message | null {
+    if (messageJson === null) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(messageJson) as Message;
+    } catch (err) {
+      console.error("Failed to parse message JSON", err);
+      return null;
+    }
+  }
+
+  public async getMessages(
+    roomCode: string,
+    limit: number = 50,
+  ): Promise<Message[]> {
+    const key = `room:${roomCode}:messages`;
+    const client = await this.getClient();
+    const messagesJson = await client.zRange(key, -limit, -1);
+
+    return messagesJson
+      .map((messageJson) => this.safeParseMessage(messageJson))
+      .filter((message): message is Message => message !== null);
+  }
+
+  private async getNextMessageId(roomCode: string): Promise<number> {
+    const key = `room:${roomCode}:messageId`;
+    const client = await this.getClient();
+    return await client.incr(key);
+  }
+
+  public async addMessage(
+    roomCode: string,
+    content: string,
+    userId: string,
+  ): Promise<Message> {
+    const key = `room:${roomCode}:messages`;
+    const client = await this.getClient();
+
+    const messageId = await this.getNextMessageId(roomCode);
+    const message: Message = {
+      id: messageId,
+      content,
+      userId,
+      timestamp: Date.now(),
+    };
+
+    await client.zAdd(key, {
+      score: messageId,
+      value: JSON.stringify(message),
+    });
+
+    return message;
+  }
+}

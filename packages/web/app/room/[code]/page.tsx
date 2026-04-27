@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import RoomClient from "@/app/components/RoomClient";
 import roomsService from "@/app/services/rooms.service";
 import usersService from "@/app/services/users.service";
+import messagesService from "@/app/services/messages.service";
 
 type Params = {
   code: string;
@@ -38,14 +39,15 @@ export default async function RoomPage({ params }: Props) {
 
   const users = await usersService.getUsersInRoom(code);
   const onlineUsers = await usersService.getOnlineUsersInRoom(code);
+  const messages = await messagesService.getMessagesInRoom(code);
 
   return (
     <RoomClient
       userId={userId}
       roomCode={code}
-      users={users}
-      messages={[]} // TODO: fetch messages
-      onlineUsers={onlineUsers}
+      initialUsers={users}
+      initialOnlineUsers={onlineUsers}
+      messages={messages}
     />
   );
 }

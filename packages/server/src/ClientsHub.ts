@@ -25,6 +25,7 @@ export default class ClientsHub {
       client,
       container.roomsUseCases,
       container.usersUseCases,
+      container.messagesUseCases,
     );
 
     controller.bindHandlers(this);
@@ -45,34 +46,6 @@ export default class ClientsHub {
       if (!filter || filter(client)) {
         client.send(message);
       }
-    }
-  }
-
-  public onMessage<K extends keyof ClientMessages>(
-    messageType: K,
-    handler: (message: ResolveClientMessageType<K>, client: Client) => void,
-  ) {
-    for (const client of this.clients) {
-      client.on(messageType, (message) =>
-        handler(message as ResolveClientMessageType<K>, client),
-      );
-    }
-  }
-
-  public offMessage<K extends keyof ClientMessages>(
-    messageType: K,
-    handler: (message: ResolveClientMessageType<K>, client: Client) => void,
-  ) {
-    for (const client of this.clients) {
-      client.off(messageType, (message) =>
-        handler(message as ResolveClientMessageType<K>, client),
-      );
-    }
-  }
-
-  public stopAll() {
-    for (const client of this.clients) {
-      client.stop();
     }
   }
 }

@@ -1,20 +1,10 @@
 import type { User } from "shared/models";
-import useUsers from "../hooks/useUsers";
-import useOnlineUsers from "../hooks/useOnlineUsers";
 
 type Props = {
-  initialUsers: User[];
-  initialOnlineUsers: string[];
+  activeUsers: User[];
 };
 
-export default function UsersList({ initialUsers, initialOnlineUsers }: Props) {
-  const users = useUsers(initialUsers);
-  const onlineUsers = useOnlineUsers(initialOnlineUsers);
-
-  const activeUsers = onlineUsers
-    .map((userId) => users.find((u) => u.id === userId))
-    .filter((u): u is User => u !== undefined);
-
+export default function UsersList({ activeUsers }: Props) {
   return (
     <aside className="w-56 border-r border-gray-800 bg-gray-900 p-3">
       <h2 className="text-sm uppercase tracking-wider text-gray-400 mb-3">

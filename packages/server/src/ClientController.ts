@@ -1,7 +1,11 @@
 import { messages } from "shared/messaging";
 import Client from "./Client.js";
 import ClientsHub from "./ClientsHub.js";
-import { RoomsUseCases, UsersUseCases } from "application/use-cases";
+import {
+  MessagesUseCases,
+  RoomsUseCases,
+  UsersUseCases,
+} from "application/use-cases";
 
 export default class ClientController {
   private readonly cleanupFunctions: (() => void)[] = [];
@@ -10,6 +14,7 @@ export default class ClientController {
     private readonly client: Client,
     private readonly roomsUseCases: RoomsUseCases,
     private readonly usersUseCases: UsersUseCases,
+    private readonly messagesUseCases: MessagesUseCases,
   ) {}
 
   public bindHandlers(hub: ClientsHub) {
@@ -24,6 +29,11 @@ export default class ClientController {
     this.client.on("syncUsers", this.syncUsers.bind(this));
 
     this.client.on("syncOnlineUsers", this.syncOnlineUsers.bind(this));
+
+    this.client.on("sendMessage", (message) => {
+      const { content } = message.payload;
+      this.sendMessage(content, hub);
+    });
 
     this.client.onClose(() => this.onClose(hub));
   }
@@ -79,6 +89,18 @@ export default class ClientController {
 
     this.client.send(
       new messages.events.syncOnlineUsersResult({ onlineUsers }),
+    );
+  }
+
+  private async sendMessage(content: string, hub: ClientsHub) {
+    if (!this.client.userId) {
+      return;
+    }
+
+    const message = await this.messagesUseCases.addMessage(
+      this.client.roomCode,
+      content,
+      this.client.userId,
     );
   }
 

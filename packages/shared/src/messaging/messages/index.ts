@@ -11,6 +11,7 @@ import SyncUsersEnvelope from "./SyncUsersEnvelope.js";
 import SyncOnlineUsersEnvelope from "./SyncOnlineUsersEnvelope.js";
 import SyncOnlineUsersResultEnvelope from "./SyncOnlineUsersResultEnvelope.js";
 import SyncUsersResultEnvelope from "./SyncUsersResultEnvelope.js";
+import SendMessageEnvelope from "./SendMessageEnvelope.js";
 
 export const commands = {
   watchRoomData: WatchRoomDataEnvelope,
@@ -19,6 +20,7 @@ export const commands = {
   updateRoom: UpdateRoomEnvelope,
   syncOnlineUsers: SyncOnlineUsersEnvelope,
   syncUsers: SyncUsersEnvelope,
+  sendMessage: SendMessageEnvelope,
 } as const;
 
 export const events = {

@@ -1,17 +1,23 @@
 import { useState } from "react";
 import CustomButton from "./Button";
+import useDispatch from "../hooks/useDispatch";
+import { messages } from "shared/messaging";
 
-type Props = {
-  onSend: (message: string) => void;
-};
+export default function MessageInput() {
+  const dipatch = useDispatch();
 
-export default function MessageInput({ onSend }: Props) {
   const [message, setMessage] = useState("");
   const disabled = message.trim() === "";
 
   const handleSend = () => {
     if (disabled) return;
-    onSend(message);
+
+    dipatch(
+      new messages.commands.sendMessage({
+        content: message.trim(),
+      }),
+    );
+
     setMessage("");
   };
 
@@ -46,9 +52,9 @@ export default function MessageInput({ onSend }: Props) {
             viewBox="0 0 24 24"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M12 2a1 1 0 0 1 .932.638l7 18a1 1 0 0 1-1.326 1.281L13 19.517V13a1 1 0 1 0-2 0v6.517l-5.606 2.402a1 1 0 0 1-1.326-1.281l7-18A1 1 0 0 1 12 2Z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             />
           </svg>
         </CustomButton>

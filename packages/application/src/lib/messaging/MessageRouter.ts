@@ -24,7 +24,8 @@ export type ClientMessages = MapMessageDefinitions<
   | "watchRoomData"
   | "auth"
   | "syncOnlineUsers"
-  | "syncUsers",
+  | "syncUsers"
+  | "sendMessage",
   | "userJoined"
   | "userLeft"
   | "userCreated"
@@ -56,6 +57,7 @@ const scopes: {
     syncUsers: messages.commands.syncUsers,
     syncOnlineUsersResult: messages.events.syncOnlineUsersResult,
     syncUsersResult: messages.events.syncUsersResult,
+    sendMessage: messages.commands.sendMessage,
   },
 };
 
