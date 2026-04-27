@@ -56,8 +56,7 @@ export default class ClientController {
 
     hub.broadcastMessage(
       new messages.events.userJoined({ userId }),
-      (client) =>
-        client.roomCode === this.client.roomCode && client !== this.client,
+      (client) => client.roomCode === this.client.roomCode,
     );
   }
 
@@ -102,6 +101,11 @@ export default class ClientController {
       content,
       this.client.userId,
     );
+
+    hub.broadcastMessage(
+      new messages.events.newMessage({ message }),
+      (client) => client.roomCode === this.client.roomCode,
+    );
   }
 
   private async onClose(hub: ClientsHub) {
@@ -118,5 +122,15 @@ export default class ClientController {
           client.roomCode === this.client.roomCode && client !== this.client,
       );
     }
+  }
+
+  public async syncMessages() {
+    const chatMessages = await this.messagesUseCases.getMessagesInRoom(
+      this.client.roomCode,
+    );
+
+    this.client.send(
+      new messages.events.syncMessagesResult({ messages: chatMessages }),
+    );
   }
 }

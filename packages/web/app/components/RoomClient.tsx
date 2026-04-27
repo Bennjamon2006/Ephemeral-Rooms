@@ -3,12 +3,13 @@
 import type { User, Message } from "shared/models";
 import useDispatch from "../hooks/useDispatch";
 import { useEffect } from "react";
-import { messages } from "shared/messaging";
+import { messages as domainMessages } from "shared/messaging";
 import UsersList from "./UsersList";
 import MessageInput from "./MessageInput";
 import MessagesList from "./MessagesList";
 import useOnlineUsers from "../hooks/useOnlineUsers";
 import useUsers from "../hooks/useUsers";
+import useChatMessages from "../hooks/useChatMessages";
 
 type Props = {
   userId: string;
@@ -22,22 +23,21 @@ export default function RoomClient({
   userId,
   roomCode,
   initialUsers,
-  messages: roomMessages,
+  messages,
   initialOnlineUsers,
 }: Props) {
   const dispatch = useDispatch();
 
   const users = useUsers(initialUsers);
   const onlineUsers = useOnlineUsers(initialOnlineUsers);
+  const roomMessages = useChatMessages(messages);
 
-  const activeUsers = initialOnlineUsers
+  const activeUsers = onlineUsers
     .map((userId) => users.find((u) => u.id === userId))
     .filter((u): u is User => u !== undefined);
 
   useEffect(() => {
-    console.log("Dispatching");
-
-    dispatch(new messages.commands.auth({ userId }));
+    dispatch(new domainMessages.commands.auth({ userId }));
   }, [userId, roomCode, dispatch]);
 
   return (

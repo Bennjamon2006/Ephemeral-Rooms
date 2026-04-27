@@ -25,13 +25,16 @@ export type ClientMessages = MapMessageDefinitions<
   | "auth"
   | "syncOnlineUsers"
   | "syncUsers"
-  | "sendMessage",
+  | "sendMessage"
+  | "syncMessages",
   | "userJoined"
   | "userLeft"
   | "userCreated"
   | "roomDataUpdated"
   | "syncOnlineUsersResult"
   | "syncUsersResult"
+  | "syncMessagesResult"
+  | "newMessage"
 >;
 
 const scopes: {
@@ -58,6 +61,9 @@ const scopes: {
     syncOnlineUsersResult: messages.events.syncOnlineUsersResult,
     syncUsersResult: messages.events.syncUsersResult,
     sendMessage: messages.commands.sendMessage,
+    syncMessages: messages.commands.syncMessages,
+    syncMessagesResult: messages.events.syncMessagesResult,
+    newMessage: messages.events.newMessage,
   },
 };
 

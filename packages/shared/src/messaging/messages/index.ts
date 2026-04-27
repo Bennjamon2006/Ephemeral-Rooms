@@ -12,6 +12,9 @@ import SyncOnlineUsersEnvelope from "./SyncOnlineUsersEnvelope.js";
 import SyncOnlineUsersResultEnvelope from "./SyncOnlineUsersResultEnvelope.js";
 import SyncUsersResultEnvelope from "./SyncUsersResultEnvelope.js";
 import SendMessageEnvelope from "./SendMessageEnvelope.js";
+import SyncMessagesEnvelope from "./SyncMessagesEnvelope.js";
+import SyncMessagesResultEnvelope from "./SyncMessagesResultEnvelope.js";
+import NewMessageEnvelope from "./NewMessageEnvelope.js";
 
 export const commands = {
   watchRoomData: WatchRoomDataEnvelope,
@@ -21,6 +24,7 @@ export const commands = {
   syncOnlineUsers: SyncOnlineUsersEnvelope,
   syncUsers: SyncUsersEnvelope,
   sendMessage: SendMessageEnvelope,
+  syncMessages: SyncMessagesEnvelope,
 } as const;
 
 export const events = {
@@ -30,4 +34,6 @@ export const events = {
   userLeft: UserLeftEnvelope,
   syncOnlineUsersResult: SyncOnlineUsersResultEnvelope,
   syncUsersResult: SyncUsersResultEnvelope,
+  syncMessagesResult: SyncMessagesResultEnvelope,
+  newMessage: NewMessageEnvelope,
 } as const;
