@@ -55,7 +55,7 @@ export default function RoomClient({
         {/* CHAT AREA */}
         <main className="flex-1 flex flex-col bg-gray-950">
           {/* messages */}
-          <MessagesList messages={roomMessages} users={users} />
+          <MessagesList messages={roomMessages} users={users} userId={userId} />
 
           {/* input placeholder */}
           <MessageInput />

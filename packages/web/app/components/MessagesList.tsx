@@ -1,12 +1,18 @@
 import type { Message, User } from "shared/models";
+import MessageItem from "./Message";
 
 type Props = {
   messages: Message[];
   users: User[];
+  userId: string;
 };
 
-export default function MessagesList({ messages, users }: Props) {
+export default function MessagesList({ messages, users, userId: me }: Props) {
   const getUserName = (userId: string) => {
+    if (userId === me) {
+      return "Tú";
+    }
+
     const user = users.find((u) => u.id === userId);
     return user ? user.name : "Unknown User";
   };
@@ -14,12 +20,12 @@ export default function MessagesList({ messages, users }: Props) {
   return (
     <div className="flex-1 overflow-y-auto p-6 space-y-3">
       {messages.map((m, i) => (
-        <div key={i} className="max-w-xl px-4 py-2 rounded bg-gray-800">
-          <span className="text-indigo-400 font-medium">
-            {getUserName(m.userId)}
-          </span>
-          : {m.content}
-        </div>
+        <MessageItem
+          key={i}
+          content={m.content}
+          username={getUserName(m.userId)}
+          itsMe={m.userId === me}
+        />
       ))}
     </div>
   );
