@@ -1,4 +1,4 @@
-import type { Message } from "shared/models";
+import type { Events, Message } from "shared/models";
 import { MessagesRepository } from "shared/repositories";
 import RedisConsumer from "../../RedisConsumer.js";
 
@@ -38,7 +38,7 @@ export default class RedisMessagesRepository
     return await client.incr(key);
   }
 
-  public async addMessage(
+  public async addTextMessage(
     roomCode: string,
     content: string,
     userId: string,
@@ -52,6 +52,32 @@ export default class RedisMessagesRepository
       content,
       userId,
       timestamp: Date.now(),
+      type: "text",
+    };
+
+    await client.zAdd(key, {
+      score: messageId,
+      value: JSON.stringify(message),
+    });
+
+    return message;
+  }
+
+  public async addSystemMessage(
+    roomCode: string,
+    event: Events,
+    userId: string,
+  ): Promise<Message> {
+    const key = `room:${roomCode}:messages`;
+    const client = await this.getClient();
+
+    const messageId = await this.getNextMessageId(roomCode);
+    const message: Message = {
+      id: messageId,
+      event,
+      userId,
+      timestamp: Date.now(),
+      type: "system",
     };
 
     await client.zAdd(key, {

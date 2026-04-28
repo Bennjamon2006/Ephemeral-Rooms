@@ -14,12 +14,13 @@ export default class NewMessageEnvelope extends Envelope<
   }
 
   public validate(): boolean {
-    return (
+    /* return (
       typeof this.payload.message === "object" &&
       typeof this.payload.message.id === "number" &&
       typeof this.payload.message.content === "string" &&
       typeof this.payload.message.userId === "string" &&
       typeof this.payload.message.timestamp === "number"
-    );
+    ); */
+    return typeof this.payload.message === "object";
   }
 }

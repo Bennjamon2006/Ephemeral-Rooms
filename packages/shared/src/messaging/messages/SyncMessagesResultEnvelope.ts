@@ -14,16 +14,14 @@ export default class SyncMessagesResultEnvelope extends Envelope<
   }
 
   public validate(): boolean {
-    return (
-      Array.isArray(this.payload.messages) &&
-      this.payload.messages.every((message) => {
+    return Array.isArray(this.payload.messages);
+    /* && this.payload.messages.every((message) => {
         return (
           typeof message.id === "number" &&
           typeof message.content === "string" &&
           typeof message.userId === "string" &&
           typeof message.timestamp === "number"
         );
-      })
-    );
+      }) */
   }
 }

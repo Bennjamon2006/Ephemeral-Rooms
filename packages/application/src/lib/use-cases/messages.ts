@@ -1,4 +1,4 @@
-import type { Message } from "shared/models";
+import type { Events, Message } from "shared/models";
 import type { MessagesRepository } from "shared/repositories";
 
 export default class MessagesUseCases {
@@ -11,11 +11,27 @@ export default class MessagesUseCases {
     return await this.messagesRepository.getMessages(roomCode, limit);
   }
 
-  public async addMessage(
+  public async addTextMessage(
     roomCode: string,
     content: string,
     userId: string,
   ): Promise<Message> {
-    return await this.messagesRepository.addMessage(roomCode, content, userId);
+    return await this.messagesRepository.addTextMessage(
+      roomCode,
+      content,
+      userId,
+    );
+  }
+
+  public async addSystemMessage(
+    roomCode: string,
+    event: Events,
+    userId: string,
+  ): Promise<Message> {
+    return await this.messagesRepository.addSystemMessage(
+      roomCode,
+      event,
+      userId,
+    );
   }
 }

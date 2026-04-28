@@ -35,6 +35,8 @@ export default class ClientController {
       this.sendMessage(content, hub);
     });
 
+    this.client.on("syncMessages", this.syncMessages.bind(this));
+
     this.client.onClose(() => this.onClose(hub));
   }
 
@@ -50,12 +52,26 @@ export default class ClientController {
   }
 
   public async authenticate(userId: string, hub: ClientsHub) {
+    if (this.client.userId) {
+      return;
+    }
+
     this.client.setUserId(userId);
 
     await this.usersUseCases.setUserOnline(this.client.roomCode, userId);
+    const message = await this.messagesUseCases.addSystemMessage(
+      this.client.roomCode,
+      "userJoined",
+      userId,
+    );
 
     hub.broadcastMessage(
       new messages.events.userJoined({ userId }),
+      (client) => client.roomCode === this.client.roomCode,
+    );
+
+    hub.broadcastMessage(
+      new messages.events.newMessage({ message }),
       (client) => client.roomCode === this.client.roomCode,
     );
   }
@@ -96,7 +112,7 @@ export default class ClientController {
       return;
     }
 
-    const message = await this.messagesUseCases.addMessage(
+    const message = await this.messagesUseCases.addTextMessage(
       this.client.roomCode,
       content,
       this.client.userId,
@@ -121,10 +137,21 @@ export default class ClientController {
         (client) =>
           client.roomCode === this.client.roomCode && client !== this.client,
       );
+
+      const message = await this.messagesUseCases.addSystemMessage(
+        this.client.roomCode,
+        "userLeft",
+        userId,
+      );
+
+      hub.broadcastMessage(
+        new messages.events.newMessage({ message }),
+        (client) => client.roomCode === this.client.roomCode,
+      );
     }
   }
 
-  public async syncMessages() {
+  private async syncMessages() {
     const chatMessages = await this.messagesUseCases.getMessagesInRoom(
       this.client.roomCode,
     );

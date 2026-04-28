@@ -4,7 +4,7 @@ type Props = {
   itsMe: boolean;
 };
 
-export default function Message({ content, username, itsMe }: Props) {
+export default function TextMessage({ content, username, itsMe }: Props) {
   return (
     <div className={`flex ${itsMe ? "justify-end" : "justify-start"}`}>
       <div

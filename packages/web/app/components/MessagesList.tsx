@@ -1,5 +1,6 @@
 import type { Message, User } from "shared/models";
-import MessageItem from "./Message";
+import TextMessage from "./TextMessage";
+import SystemMessage from "./SystemMessage";
 
 type Props = {
   messages: Message[];
@@ -19,14 +20,23 @@ export default function MessagesList({ messages, users, userId: me }: Props) {
 
   return (
     <div className="flex-1 overflow-y-auto p-6 space-y-3">
-      {messages.map((m, i) => (
-        <MessageItem
-          key={i}
-          content={m.content}
-          username={getUserName(m.userId)}
-          itsMe={m.userId === me}
-        />
-      ))}
+      {messages.map((m, i) =>
+        m.type === "text" ? (
+          <TextMessage
+            key={i}
+            content={m.content}
+            username={getUserName(m.userId)}
+            itsMe={m.userId === me}
+          />
+        ) : (
+          <SystemMessage
+            key={i}
+            event={m.event}
+            username={getUserName(m.userId)}
+            itsMe={m.userId === me}
+          />
+        ),
+      )}
     </div>
   );
 }
