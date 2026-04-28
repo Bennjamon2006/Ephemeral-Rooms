@@ -12,6 +12,7 @@ import {
 } from "infra/redis";
 import getRedisProvider from "./redis.js";
 import { MessageRouter } from "application/messaging";
+import { ExpirationService } from "application/classes";
 
 type Container = {
   usersUseCases: UsersUseCases;
@@ -46,9 +47,16 @@ export default async function createContainer(): Promise<Container> {
   const messagesRepository = new RedisMessagesRepository(redisProvider);
   const roomContextFactory = new RedisRoomContextFactory(redisProvider);
 
+  const expirationService = new ExpirationService(
+    roomsRepository,
+    usersRepository,
+    messagesRepository,
+  );
+
   const roomsUseCases = new RoomsUseCases(
     roomsRepository,
     roomContextFactory,
+    expirationService,
     systemMessageRouter,
   );
   const usersUseCases = new UsersUseCases(
@@ -58,7 +66,6 @@ export default async function createContainer(): Promise<Container> {
   );
   const messagesUseCases = new MessagesUseCases(messagesRepository);
   await roomsUseCases.init();
-  await usersUseCases.init();
 
   const container = {
     usersUseCases,

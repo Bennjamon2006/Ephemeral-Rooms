@@ -5,6 +5,7 @@ import calculateExpiresAt from "@/helpers/calculateExpiresAt.js";
 import { RoomContextFactory } from "@/lib/interfaces/index.js";
 import MessageRouter from "@/lib/messaging/MessageRouter.js";
 import { messages } from "shared/messaging";
+import { ExpirationService } from "@/lib/classes/index.js";
 
 export default class RoomsUseCases {
   private readonly ROOM_CODE_LENGTH = 6;
@@ -12,6 +13,7 @@ export default class RoomsUseCases {
   constructor(
     private readonly roomsRepository: RoomsRepository,
     private readonly roomContextFactory: RoomContextFactory,
+    private readonly expirationService: ExpirationService,
     private readonly systemMessageRouter: MessageRouter<"system">,
   ) {}
 
@@ -46,16 +48,7 @@ export default class RoomsUseCases {
   }
 
   public async updateRoom(roomCode: string, empty: boolean): Promise<void> {
-    const roomState: RoomState = {
-      empty,
-      expiresAt: calculateExpiresAt(empty ? "empty" : "occupied"),
-    };
-
-    await this.roomsRepository.setRoomState(roomCode, roomState);
-
-    this.systemMessageRouter.send(
-      new messages.events.roomDataUpdated({ roomCode, roomState }),
-    );
+    const roomState = await this.expirationService.touchRoom(roomCode, empty);
 
     const roomContext = await this.roomContextFactory.create(roomCode);
 

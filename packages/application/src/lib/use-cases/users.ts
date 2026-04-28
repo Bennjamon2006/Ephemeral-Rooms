@@ -12,19 +12,6 @@ export default class UsersUseCases {
     private readonly systemMessageRouter: MessageRouter<"system">,
   ) {}
 
-  public async init(): Promise<void> {
-    this.systemMessageRouter.on("roomDataUpdated", async (message) => {
-      if (!message.payload.roomCode) {
-        console.warn("Received roomDataUpdated without roomCode");
-        return;
-      }
-
-      const { roomCode, roomState } = message.payload;
-
-      await this.syncUsersOnRoom(roomCode, roomState.expiresAt);
-    });
-  }
-
   public async getUsersInRoom(roomCode: string): Promise<User[]> {
     return this.usersRepository.getRoomUsers(roomCode);
   }
@@ -92,12 +79,5 @@ export default class UsersUseCases {
         new messages.commands.updateRoom({ empty: true, roomCode }),
       );
     }
-  }
-
-  public async syncUsersOnRoom(
-    roomCode: string,
-    expiresAt: number,
-  ): Promise<void> {
-    await this.usersRepository.setTTLs(roomCode, expiresAt);
   }
 }

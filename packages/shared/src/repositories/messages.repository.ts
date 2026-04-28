@@ -7,4 +7,5 @@ export default interface MessagesRepository {
     content: string,
     userId: string,
   ): Promise<Message>;
+  setExpiration(roomCode: string, expiresAt: number): Promise<void>;
 }

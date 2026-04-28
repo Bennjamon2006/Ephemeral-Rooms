@@ -73,7 +73,10 @@ export default class RedisUsersRepository
     await client.sRem(key, userId);
   }
 
-  public async setTTLs(roomCode: string, expiresAt: number): Promise<void> {
+  public async setExpiration(
+    roomCode: string,
+    expiresAt: number,
+  ): Promise<void> {
     const usersKey = `room:${roomCode}:users`;
     const onlineUsersKey = `room:${roomCode}:onlineUsers`;
     const client = await this.getClient();

@@ -61,4 +61,16 @@ export default class RedisMessagesRepository
 
     return message;
   }
+
+  public async setExpiration(
+    roomCode: string,
+    expiresAt: number,
+  ): Promise<void> {
+    const messagesKey = `room:${roomCode}:messages`;
+
+    const client = await this.getClient();
+
+    const ttlSeconds = Math.ceil((expiresAt - Date.now()) / 1000);
+    await client.expire(messagesKey, ttlSeconds);
+  }
 }

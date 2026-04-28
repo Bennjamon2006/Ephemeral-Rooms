@@ -11,6 +11,7 @@ import {
   RedisMessagesRepository,
 } from "infra/redis";
 import { MessageRouter } from "application/messaging";
+import { ExpirationService } from "application/classes";
 import getRedisProvider from "./redis";
 
 type Container = {
@@ -45,10 +46,16 @@ export default async function createContainer(): Promise<Container> {
   const roomsRepository = new RedisRoomsRepository(redisProvider);
   const messagesRepository = new RedisMessagesRepository(redisProvider);
   const roomContextFactory = new RedisRoomContextFactory(redisProvider);
+  const expirationService = new ExpirationService(
+    roomsRepository,
+    usersRepository,
+    messagesRepository,
+  );
 
   const roomsUseCases = new RoomsUseCases(
     roomsRepository,
     roomContextFactory,
+    expirationService,
     systemMessageRouter,
   );
   const usersUseCases = new UsersUseCases(
