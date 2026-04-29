@@ -16,8 +16,7 @@ export default function MessagingProvider({ children, url }: Props) {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    const socket = new WebSocket(url);
-    const transporter = new WSClientMessageTransporter(socket);
+    const transporter = new WSClientMessageTransporter(url);
     const messageRouter = new MessageRouter(transporter, "client");
 
     setConnected(false);
@@ -34,7 +33,6 @@ export default function MessagingProvider({ children, url }: Props) {
 
     return () => {
       messageRouter.stop();
-      socket.close();
     };
   }, [url]);
 

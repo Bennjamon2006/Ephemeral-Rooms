@@ -1,108 +1,64 @@
-import { messages, MessageTransporter } from "shared/messaging";
+import { MessageTransporter } from "shared/messaging";
+import WSClientConnectionManager from "../WSClientConnectionManager.js";
 
 export default class WSClientMessageTransporter implements MessageTransporter {
   private readonly queue: string[] = [];
-  private promise: Promise<void> | null = null;
-  private listeners: Set<(event: MessageEvent) => void> = new Set();
+  private readonly listeners: Set<(raw: string) => void> = new Set();
+  private readonly connectionManager: WSClientConnectionManager;
+  private socket: WebSocket | null = null;
 
-  private onError?: (err: ErrorEvent) => void;
-
-  constructor(private readonly socket: WebSocket) {}
-
-  get isReady(): boolean {
-    return this.socket.readyState === WebSocket.OPEN;
-  }
-
-  private cleanUpListeners() {
-    if (this.onError) {
-      this.socket.removeEventListener("error", this.onError);
-    }
-
-    this.listeners.forEach((listener) => {
-      this.socket.removeEventListener("message", listener);
-    });
-  }
-
-  private async poll(interval: number): Promise<void> {
-    while (!this.isReady) {
-      await new Promise((resolve) => setTimeout(resolve, interval));
-    }
-  }
-
-  private async waitConnection(): Promise<void> {
-    if (this.isReady) {
-      return;
-    }
-
-    if (this.promise) {
-      return this.promise;
-    }
-
-    this.promise = new Promise((resolve, reject) => {
-      this.onError = (err) => {
-        reject(err);
-      };
-
-      this.socket.addEventListener("error", this.onError);
-
-      this.poll(100)
-        .then(() => {
-          resolve();
-        })
-        .catch(reject);
-    });
-
-    return this.promise;
-  }
-
-  private flushQueue(): void {
-    this.queue.forEach((raw) => this.send(raw));
-    this.queue.length = 0;
+  constructor(url: string) {
+    this.connectionManager = new WSClientConnectionManager(url);
   }
 
   public async prepare(): Promise<void> {
-    try {
-      await this.waitConnection();
-
-      if (this.isReady) {
-        this.flushQueue();
-      }
-    } catch (err) {
-      console.error("Error occurred while preparing message transporter:", err);
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      return;
     }
 
-    this.cleanUpListeners();
-    this.promise = null;
-  }
+    try {
+      this.socket = await this.connectionManager.getConnection();
+      this.socket.addEventListener("message", (event) => {
+        for (const listener of this.listeners) {
+          listener(event.data);
+        }
+      });
 
-  public close(): void {
-    this.socket.close();
-    this.cleanUpListeners();
-  }
+      this.socket.addEventListener("close", () => {
+        console.warn("WebSocket closed, attempting reconnect...");
 
-  private send(raw: string): void {
-    this.socket.send(raw);
+        this.socket = null;
+
+        this.prepare().catch((error) => {
+          console.error("Failed to re-establish WebSocket connection:", error);
+        });
+      });
+
+      // Flush the queue
+      while (this.queue.length > 0) {
+        const message = this.queue.shift()!;
+        this.socket.send(message);
+      }
+    } catch (error) {
+      console.error("Failed to establish WebSocket connection:", error);
+      throw error;
+    }
   }
 
   public sendMessage(raw: string): void {
-    if (this.socket.readyState === WebSocket.OPEN) {
-      this.send(raw);
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(raw);
     } else {
       this.queue.push(raw);
     }
   }
 
-  public onMessage(handler: (raw: string) => void): void {
-    const messageListener = (event: MessageEvent) => {
-      if (typeof event.data === "string") {
-        handler(event.data);
-      } else {
-        console.warn("Received non-string message, ignoring");
-      }
-    };
+  public onMessage(listener: (raw: string) => void): void {
+    this.listeners.add(listener);
+  }
 
-    this.socket.addEventListener("message", messageListener);
-
-    this.listeners.add(messageListener);
+  public close(): void {
+    this.connectionManager.close();
+    this.socket = null;
   }
 }

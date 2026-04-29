@@ -14,7 +14,6 @@ export default function useChatMessages(initialMessages: Message[]) {
 
   useMessage("newMessage", (message) => {
     setMessages((prevMessages) => {
-      console.log("Received new message:", message.payload.message);
       if (prevMessages.some((m) => m.id === message.payload.message.id)) {
         return prevMessages;
       }
