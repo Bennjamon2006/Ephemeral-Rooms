@@ -13,6 +13,7 @@
     "start": "concurrently --names \"web,server\" \"npm run start --workspace web\" \"npm run start --workspace server\"",
     "lint": "npm run lint --workspaces",
     "prod:web": "npm run build --workspace shared && npm run build --workspace application && npm run build --workspace infra && npm run build --workspace web",
+    "prod:server": "npm run build --workspace shared && npm run build --workspace application && npm run build --workspace infra && npm run build --workspace server",
     "commit": "cz"
   },
   "workspaces": [
