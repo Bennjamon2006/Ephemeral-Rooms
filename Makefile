@@ -65,8 +65,6 @@ prod-server: install $(SERVER)/dist
 prod-web: install web-build
 	npm run start --workspace $(WEB)
 
-prod-web-vercel: install web-build
-
 # ==============================
 # CLEAN
 # ==============================
