@@ -52,7 +52,7 @@ $(INFRA)/dist: $(SHARED)/dist $(APPLICATION)/dist
 $(SERVER)/dist: $(SHARED)/dist $(APPLICATION)/dist $(INFRA)/dist
 	npm run build --workspace $(SERVER)
 
-$(WEB)/dist: $(SHARED)/dist $(APPLICATION)/dist $(INFRA)/dist
+web-build: $(SHARED)/dist $(APPLICATION)/dist $(INFRA)/dist
 	npm run build --workspace $(WEB)
 
 # ==============================
@@ -62,8 +62,10 @@ $(WEB)/dist: $(SHARED)/dist $(APPLICATION)/dist $(INFRA)/dist
 prod-server: install $(SERVER)/dist
 	npm run start --workspace $(SERVER)
 
-prod-web: install $(WEB)/dist
+prod-web: install web-build
 	npm run start --workspace $(WEB)
+
+prod-web-vercel: install web-build
 
 # ==============================
 # CLEAN
