@@ -4,14 +4,16 @@
 
 Una aplicación de chat en tiempo real donde los usuarios pueden crear salas temporales que se borran cuando todos se desconectan. Perfecto para conversaciones rápidas y privadas sin complicarte con cuentas.
 
+[Demo en vivo](https://ephemeral-rooms-web-vyvy.vercel.app/)
+
 ![Status](https://img.shields.io/badge/status-complete-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## ✨ Features
 
-- 🔗 **Compartir enlace** - Envia el enlace de la sala a tus amigos
-- 🔢 **Unirse con código** - Unite con un código simple
-- 👤 **Sin registro** - Elegí un nombre y empezá a chatear
+- 🔗 **Compartir enlace** - Envía el enlace de la sala a tus amigos
+- 🔢 **Unirse con código** - Únete con un código simple
+- 👤 **Sin registro** - Elige un nombre y empezá a chatear
 - 🗑️ **Efímero** - Las salas se borran cuando todos se van
 - ⏱️ **Auto-limpieza** - Salas inactivas se eliminan después de 1 minuto
 - 💬 **Tiempo real** - Mensajes instantáneos via WebSocket
