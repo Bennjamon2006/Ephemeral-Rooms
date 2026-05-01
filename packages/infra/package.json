@@ -19,8 +19,8 @@
     }
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc -w",
+    "build": "npm exec tsc",
+    "dev": "npm exec tsc -w",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run clean && npm run build"
   },

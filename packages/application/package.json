@@ -31,8 +31,8 @@
     }
   },
   "scripts": {
-    "build": "tsc && tsc-alias",
-    "dev": "tsc -w & tsc-alias -w",
+    "build": "npm exec tsc && npm exec tsc-alias",
+    "dev": "npm exec tsc -w & npm exec tsc-alias -w",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run clean && npm run build"
   },
