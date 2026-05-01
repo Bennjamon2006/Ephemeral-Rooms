@@ -1,10 +1,17 @@
+import http from "http";
 import { WebSocketServer } from "ws";
 import Server from "./Server.js";
 
-const wss = new WebSocketServer({ port: 3001 });
+const PORT = process.env.PORT || 3001;
+
+const httpServer = http.createServer();
+
+const wss = new WebSocketServer({ server: httpServer });
 
 const server = new Server(wss);
 
 server.start();
 
-console.log("WebSocket server is running on ws://localhost:3001");
+httpServer.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
